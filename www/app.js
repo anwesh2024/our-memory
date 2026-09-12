@@ -1,4 +1,4 @@
-const WORKER_URL = 'ourmemory.mrony8552.workers.dev'; // <-- এখানে ক্লাউডফ্লেয়ার লিংক থাকবে
+const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev'; // <-- এখানে ক্লাউডফ্লেয়ার লিংক থাকবে
 
 const landingPage = document.getElementById('landing-page');
 const galleryPage = document.getElementById('gallery-page');
