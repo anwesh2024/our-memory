@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Private Space ❤️</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-pink">
+
+    <!-- Landing Page -->
+    <section id="landing-page" class="view-section active">
+        <div class="letter-container">
+            <h1>A Special Letter For You ❤️</h1>
+            <p>Welcome to our private space. Before you enter the gallery, I want to capture your beautiful reaction.</p>
+            <button id="start-recording-btn" class="primary-btn">
+                Allow Camera Access for Video Recording & Enter Gallery
+            </button>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery-page" class="view-section" style="display: none;">
+        <header>
+            <h2>Our Memories</h2>
+            <div class="controls">
+                <button id="theme-toggle" class="small-btn">🌗 Theme</button>
+                <div class="layout-toggles">
+                    <button id="view-grid" class="small-btn">Grid</button>
+                    <button id="view-masonry" class="small-btn">Masonry</button>
+                </div>
+                <!-- Admin Panel Link (Secret Lock Icon) -->
+                <a href="admin.html" style="text-decoration: none; font-size: 1.5rem;" title="Admin">🔒</a>
+            </div>
+        </header>
+
+        <div id="gallery" class="gallery layout-grid">
+            <!-- আপনি পরে এখানে img ট্যাগ দিয়ে আপনাদের ছবি বসাতে পারবেন -->
+            <div class="gallery-item"><img src="https://via.placeholder.com/400x400?text=Memory+1" alt="Memory"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/400x500?text=Memory+2" alt="Memory"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/400x300?text=Memory+3" alt="Memory"></div>
+        </div>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>
