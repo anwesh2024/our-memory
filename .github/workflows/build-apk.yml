@@ -33,6 +33,10 @@ jobs:
           npx cap add android
           npx cap sync android
 
+      - name: 🔐 Inject Camera & Audio Permissions
+        run: |
+          sed -i 's/<\/manifest>/    <uses-permission android:name="android.permission.CAMERA" \/><uses-permission android:name="android.permission.RECORD_AUDIO" \/><\/manifest>/' android/app/src/main/AndroidManifest.xml
+
       - name: 🔨 Build APK
         run: |
           cd android
