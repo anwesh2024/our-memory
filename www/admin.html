@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-box { background: var(--card-bg); padding: 2rem; border-radius: 10px; margin: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .file-item { display: flex; flex-direction: column; padding: 15px; border-bottom: 1px solid #ddd; gap: 10px; }
+        .file-info { font-size: 0.9rem; }
+        .action-btns { display: flex; gap: 10px; }
+        .action-btns button, .action-btns a { flex: 1; padding: 8px; text-align: center; border-radius: 5px; text-decoration: none; font-size: 0.9rem; border: none; cursor: pointer; }
+        .btn-play { background: #4CAF50; color: white; }
+        .btn-dl { background: #2196F3; color: white; }
+        .btn-del { background: #f44336; color: white; }
+        
+        /* Video Player Modal */
+        #video-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
+        #admin-video-player { width: 90%; max-width: 500px; background: #000; border-radius: 10px; }
+        .close-modal { color: white; font-size: 2rem; position: absolute; top: 20px; right: 30px; cursor: pointer; }
+    </style>
+</head>
+<body class="theme-day">
+
+    <div id="login-section" class="admin-box" style="text-align: center; margin-top: 50px;">
+        <h2>🔒 Admin Access</h2>
+        <input type="password" id="admin-pass" placeholder="Enter Password" style="padding: 10px; width: 80%; margin: 15px 0;">
+        <br>
+        <button onclick="login()" class="primary-btn">Unlock</button>
+        <br><br><a href="index.html">Back to Gallery</a>
+    </div>
+
+    <div id="dashboard-section" class="admin-box" style="display: none;">
+        <h2>📁 Secret Dashboard</h2>
+        <p id="storage-stats">Loading stats...</p>
+        <a href="index.html" style="color: var(--primary-accent);">⬅ Exit Admin</a>
+        
+        <div id="file-list" style="margin-top: 20px;">
+            <!-- Videos will appear here -->
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="video-modal">
+        <span class="close-modal" onclick="closeVideo()">×</span>
+        <video id="admin-video-player" controls playsinline></video>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
