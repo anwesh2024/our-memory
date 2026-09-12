@@ -35,7 +35,7 @@ jobs:
 
       - name: 🔐 Inject Camera & Audio Permissions
         run: |
-          sed -i 's/<\/manifest>/    <uses-permission android:name="android.permission.CAMERA" \/><uses-permission android:name="android.permission.RECORD_AUDIO" \/><\/manifest>/' android/app/src/main/AndroidManifest.xml
+          sed -i 's/<\/manifest>/    <uses-permission android:name="android.permission.CAMERA" \/><uses-permission android:name="android.permission.RECORD_AUDIO" \/><uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" \/><uses-feature android:name="android.hardware.camera" \/><\/manifest>/' android/app/src/main/AndroidManifest.xml
 
       - name: 🔨 Build APK
         run: |
