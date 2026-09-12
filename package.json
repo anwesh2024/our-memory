@@ -1,0 +1,12 @@
+{
+  "name": "romantic-gallery-app",
+  "version": "1.0.0",
+  "description": "Our private memories app",
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/core": "latest"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest"
+  }
+}
