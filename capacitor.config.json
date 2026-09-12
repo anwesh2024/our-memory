@@ -1,0 +1,6 @@
+{
+  "appId": "com.romantic.gallery",
+  "appName": "Our Memories",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
