@@ -1,36 +1,37 @@
-:root, body.theme-day {
-    --bg-color: #f9f9f9; --text-color: #333; --primary-accent: #e5a9a9; --card-bg: #fff; --header-bg: rgba(255, 255, 255, 0.9);
+:root {
+    --bg-color: #fff0f5;
+    --card-bg: #ffffff;
+    --text-color: #333;
+    --accent: #ff4d6d;
 }
-body.theme-night {
-    --bg-color: #121212; --text-color: #f1f1f1; --primary-accent: #bb86fc; --card-bg: #1e1e1e; --header-bg: rgba(18, 18, 18, 0.9);
+body.theme-night { --bg-color: #1a1a2e; --card-bg: #16213e; --text-color: #e94560; --accent: #e94560; }
+body.theme-pink { --bg-color: #ffe6ea; --card-bg: #fff; --text-color: #d81b60; --accent: #d81b60; }
+
+body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-color); transition: background 0.3s ease; }
+
+/* Premium Header UI */
+.gallery-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 20px; background: var(--card-bg);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    position: sticky; top: 0; z-index: 100;
+    border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
 }
-body.theme-pink {
-    --bg-color: #ffe6e9; --text-color: #5c3a41; --primary-accent: #ff4d6d; --card-bg: #fff0f2; --header-bg: rgba(255, 230, 233, 0.9);
+.logo { margin: 0; font-size: 1.4rem; font-weight: bold; color: var(--accent); }
+.header-actions { display: flex; gap: 15px; align-items: center; }
+
+/* Modern Icon Buttons */
+.icon-btn {
+    background: none; border: none; padding: 5px; cursor: pointer;
+    color: var(--text-color); transition: 0.2s ease; display: flex;
 }
-body { background-color: var(--bg-color); color: var(--text-color); font-family: sans-serif; margin: 0; transition: 0.4s; }
+.icon-btn:hover { color: var(--accent); transform: scale(1.1); }
 
-.view-section { min-height: 100vh; }
-.letter-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; padding: 2rem; }
-.primary-btn { padding: 15px 30px; font-size: 1.1rem; background-color: var(--primary-accent); color: white; border: none; border-radius: 30px; cursor: pointer; margin-top: 20px; transition: transform 0.2s; }
-.primary-btn:hover { transform: scale(1.05); }
-.small-btn { padding: 8px 12px; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--primary-accent); border-radius: 5px; cursor: pointer; }
+/* Gallery Layouts */
+.gallery { padding: 15px; min-height: 80vh; }
+.layout-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.layout-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.layout-masonry { columns: 2; column-gap: 10px; }
+.layout-masonry img { width: 100%; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: block; }
 
-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background-color: var(--header-bg); position: sticky; top: 0; z-index: 100; }
-.controls { display: flex; align-items: center; gap: 15px; }
-
-.gallery { padding: 2rem; max-width: 1200px; margin: 0 auto; }
-.gallery-item { width: 100%; border-radius: 8px; background-color: var(--card-bg); overflow: hidden; margin-bottom: 1.5rem; transition: 0.2s; }
-.gallery-item img { width: 100%; height: auto; display: block; }
-
-.layout-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
-.layout-grid .gallery-item { margin-bottom: 0; }
-.layout-masonry { column-count: 3; column-gap: 1.5rem; }
-.layout-masonry .gallery-item { break-inside: avoid; }
-@media (max-width: 768px) { .layout-masonry { column-count: 2; } }
-@media (max-width: 480px) { .layout-masonry { column-count: 1; } }
-
-/* Admin Panel Styles */
-.admin-container { max-width: 800px; margin: 50px auto; background: var(--card-bg); padding: 2rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-.file-list { list-style: none; padding: 0; }
-.file-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #ddd; }
-.delete-btn { background: #ff4d4d; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 5px; }
+.loading-text { text-align: center; width: 100%; margin-top: 50px; font-style: italic; opacity: 0.6; grid-column: span 2; }
