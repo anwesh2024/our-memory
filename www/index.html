@@ -2,45 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Private Space ❤️</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Memories</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-pink">
 
     <!-- Landing Page -->
-    <section id="landing-page" class="view-section active">
-        <div class="letter-container">
-            <h1>A Special Letter For You ❤️</h1>
-            <p>Welcome to our private space. Before you enter the gallery, I want to capture your beautiful reaction.</p>
-            <button id="start-recording-btn" class="primary-btn">
-                Allow Camera Access for Video Recording & Enter Gallery
-            </button>
-        </div>
-    </section>
+    <div id="landing-page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; padding: 20px;">
+        <h1 style="color: var(--accent); font-size: 2.5rem; margin-bottom: 10px;">A Special Letter For You ❤️</h1>
+        <p style="font-size: 1.1rem; margin-bottom: 30px; opacity: 0.8;">Welcome to our private space. Before you enter the gallery, I want to capture your beautiful reaction.</p>
+        <button id="start-recording-btn" style="background: var(--accent); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(216, 27, 96, 0.4);">
+            Allow Camera Access for Video Recording & Enter Gallery
+        </button>
+    </div>
 
-    <!-- Gallery Section -->
-    <section id="gallery-page" class="view-section" style="display: none;">
-        <header>
-            <h2>Our Memories</h2>
-            <div class="controls">
-                <button id="theme-toggle" class="small-btn">🌗 Theme</button>
-                <div class="layout-toggles">
-                    <button id="view-grid" class="small-btn">Grid</button>
-                    <button id="view-masonry" class="small-btn">Masonry</button>
-                </div>
-                <!-- Admin Panel Link (Secret Lock Icon) -->
-                <a href="admin.html" style="text-decoration: none; font-size: 1.5rem;" title="Admin">🔒</a>
+    <!-- Gallery Page (Premium UI) -->
+    <div id="gallery-page" style="display: none;">
+        <header class="gallery-header">
+            <h1 class="logo">Our Memories</h1>
+            
+            <div class="header-actions">
+                <!-- Hidden Upload Input -->
+                <input type="file" id="image-upload-input" accept="image/*" multiple style="display: none;">
+                
+                <!-- Upload Icon -->
+                <button id="upload-btn" class="icon-btn" title="Upload Photo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                </button>
+                <!-- Grid Icon -->
+                <button id="view-grid" class="icon-btn">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </button>
+                <!-- Masonry Icon -->
+                <button id="view-masonry" class="icon-btn">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                </button>
+                <!-- Theme Icon -->
+                <button id="theme-toggle" class="icon-btn">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+                <!-- Admin Lock Icon -->
+                <a href="admin.html" class="icon-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </a>
             </div>
         </header>
 
         <div id="gallery" class="gallery layout-grid">
-            <!-- আপনি পরে এখানে img ট্যাগ দিয়ে আপনাদের ছবি বসাতে পারবেন -->
-            <div class="gallery-item"><img src="https://via.placeholder.com/400x400?text=Memory+1" alt="Memory"></div>
-            <div class="gallery-item"><img src="https://via.placeholder.com/400x500?text=Memory+2" alt="Memory"></div>
-            <div class="gallery-item"><img src="https://via.placeholder.com/400x300?text=Memory+3" alt="Memory"></div>
+            <!-- Uploaded photos will load here magically -->
         </div>
-    </section>
+    </div>
 
     <script src="app.js"></script>
 </body>
