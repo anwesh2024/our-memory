@@ -4,54 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Our Memories</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        :root {
+            --bg-gradient: linear-gradient(135deg, #ffe6ea 0%, #fdfbfb 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #5a3e4e;
+            --accent: #ff4d6d;
+            --shadow: 0 8px 32px rgba(255, 77, 109, 0.15);
+        }
+
+        body.theme-night {
+            --bg-gradient: linear-gradient(135deg, #1f1c2c 0%, #928DAB 100%);
+            --card-bg: rgba(30, 30, 40, 0.8);
+            --text-color: #fdfbfb;
+            --accent: #ff758f;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { min-height: 100vh; background: var(--bg-gradient); background-attachment: fixed; color: var(--text-color); transition: all 0.4s ease; }
+
+        /* Landing Page */
+        #landing-page { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; padding: 25px; }
+        .title { color: var(--accent); font-size: 2.8rem; font-weight: 700; margin-bottom: 15px; line-height: 1.2; }
+        .subtitle { font-size: 1.1rem; margin-bottom: 40px; opacity: 0.85; line-height: 1.6; }
+        .primary-btn { 
+            background: var(--accent); color: #fff; border: none; padding: 18px 35px; font-size: 1.1rem; 
+            font-weight: 600; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 20px rgba(255, 77, 109, 0.4); 
+            transition: all 0.2s ease; width: 100%; max-width: 350px;
+        }
+        .primary-btn:active { transform: scale(0.95); }
+
+        /* Premium Header */
+        .gallery-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; background: var(--card-bg);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100;
+            border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;
+        }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        
+        .icon-btn {
+            background: rgba(255, 77, 109, 0.1); border: none; padding: 10px; 
+            border-radius: 14px; cursor: pointer; color: var(--accent);
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;
+        }
+        .theme-night .icon-btn { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        .icon-btn:active { transform: scale(0.9); background: var(--accent); color: #fff; }
+
+        /* Gallery Layouts */
+        .gallery { padding: 20px; min-height: 80vh; transition: all 0.3s ease; }
+        .layout-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .layout-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 18px; box-shadow: var(--shadow); }
+        .layout-masonry { columns: 2; column-gap: 15px; }
+        .layout-masonry img { width: 100%; border-radius: 18px; margin-bottom: 15px; box-shadow: var(--shadow); display: block; }
+
+        .loading-text { text-align: center; width: 100%; margin-top: 50px; font-weight: 600; opacity: 0.7; grid-column: span 2; }
+    </style>
 </head>
-<body class="theme-pink">
+<body>
 
     <!-- Landing Page -->
-    <div id="landing-page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; padding: 20px;">
-        <h1 style="color: var(--accent); font-size: 2.5rem; margin-bottom: 10px;">A Special Letter For You ❤️</h1>
-        <p style="font-size: 1.1rem; margin-bottom: 30px; opacity: 0.8;">Welcome to our private space. Before you enter the gallery, I want to capture your beautiful reaction.</p>
-        <button id="start-recording-btn" style="background: var(--accent); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(216, 27, 96, 0.4);">
-            Allow Camera Access for Video Recording & Enter Gallery
+    <div id="landing-page">
+        <h1 class="title">A Special Letter<br>For You ❤️</h1>
+        <p class="subtitle">Welcome to our private space. Before you enter the gallery, I want to capture your beautiful reaction.</p>
+        <button id="start-recording-btn" class="primary-btn">
+            Allow Camera Access & Enter
         </button>
     </div>
 
-    <!-- Gallery Page (Premium UI) -->
+    <!-- Gallery Page -->
     <div id="gallery-page" style="display: none;">
         <header class="gallery-header">
-            <h1 class="logo">Our Memories</h1>
+            <h1 class="logo">Memories</h1>
             
             <div class="header-actions">
-                <!-- Hidden Upload Input -->
                 <input type="file" id="image-upload-input" accept="image/*" multiple style="display: none;">
                 
-                <!-- Upload Icon -->
+                <!-- Upload -->
                 <button id="upload-btn" class="icon-btn" title="Upload Photo">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 </button>
-                <!-- Grid Icon -->
-                <button id="view-grid" class="icon-btn">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <!-- Layout Toggle (Changes dynamically) -->
+                <button id="layout-toggle" class="icon-btn" title="Change View">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                 </button>
-                <!-- Masonry Icon -->
-                <button id="view-masonry" class="icon-btn">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                <!-- Theme -->
+                <button id="theme-toggle" class="icon-btn" title="Dark Mode">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                 </button>
-                <!-- Theme Icon -->
-                <button id="theme-toggle" class="icon-btn">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                </button>
-                <!-- Admin Lock Icon -->
-                <a href="admin.html" class="icon-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <!-- Admin Lock -->
+                <a href="admin.html" class="icon-btn" title="Admin">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </a>
             </div>
         </header>
 
-        <div id="gallery" class="gallery layout-grid">
-            <!-- Uploaded photos will load here magically -->
-        </div>
+        <div id="gallery" class="gallery layout-grid"></div>
     </div>
 
     <script src="app.js"></script>
