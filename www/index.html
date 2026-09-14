@@ -5,87 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Our Gallery</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
 </head>
 <body class="theme-light">
 
-    <!-- Passcode & Recording Trigger Screen -->
-    <div id="passcode-screen" class="screen active-screen">
-        <div class="passcode-content">
-            <h1 class="cursive-title">You & Me <span id="secret-heart">❤️</span></h1>
-            <p>This gallery is private.<br>Enter your passcode.</p>
-            
-            <div class="pin-dots">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-            </div>
-
-            <div class="numpad">
-                <button class="num-key">1</button><button class="num-key">2</button><button class="num-key">3</button>
-                <button class="num-key">4</button><button class="num-key">5</button><button class="num-key">6</button>
-                <button class="num-key">7</button><button class="num-key">8</button><button class="num-key">9</button>
-                <div></div><button class="num-key">0</button><button id="enter-btn" class="num-key enter-key">↵</button>
-            </div>
+    <!-- Simple Entry Screen -->
+    <div id="entry-screen" class="screen active-screen">
+        <div class="entry-content">
+            <h1 class="cursive-title">You & Me <span id="secret-heart" style="cursor:pointer;">❤️</span></h1>
+            <p class="subtitle">Welcome to our private space.</p>
+            <button id="enter-btn" class="primary-btn">Enter</button>
         </div>
     </div>
 
-    <!-- Main App Content -->
-    <div id="main-app" class="screen">
-        
-        <!-- View: Home Dashboard -->
-        <div id="view-home" class="view active-view">
-            <header class="app-header">
-                <div>
-                    <p class="greeting">Good Evening</p>
-                    <h2 class="user-name">Rony ❤️</h2>
-                </div>
-                <button id="theme-btn" class="icon-btn">🌙</button>
-            </header>
-            
-            <div class="hero-card">
-                <h3>Our Moments</h3>
-                <p id="total-photos">Loading photos...</p>
+    <!-- Minimalist Gallery Screen -->
+    <div id="gallery-screen" class="screen">
+        <header class="app-header">
+            <h2 class="cursive-title small-cursive">Our Moments</h2>
+            <div class="header-actions">
+                <button id="layout-toggle" class="icon-btn" title="Change Grid">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                </button>
+                <button id="theme-toggle" class="icon-btn" title="Change Theme">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
             </div>
+        </header>
 
-            <div class="quick-access">
-                <button class="qa-btn active" onclick="switchView('view-gallery')">🖼️ Gallery</button>
-                <button class="qa-btn">📁 Albums</button>
-                <button class="qa-btn">❤️ Favorites</button>
-                <button class="qa-btn">⏳ Timeline</button>
-            </div>
-        </div>
+        <!-- Gallery Container -->
+        <div id="gallery-grid" class="layout-2col"></div>
 
-        <!-- View: Gallery Grid -->
-        <div id="view-gallery" class="view">
-            <header class="app-header">
-                <h2 class="user-name">Our Gallery</h2>
-                <div class="filters">
-                    <span class="filter active">All</span>
-                    <span class="filter">Travel</span>
-                    <span class="filter">Special</span>
-                </div>
-            </header>
-            <div id="gallery-grid" class="masonry-grid">
-                <!-- Cloudflare images will load here -->
-            </div>
-        </div>
-
-        <!-- Bottom Navigation -->
+        <!-- Fully Functional Bottom Navigation -->
         <nav class="bottom-nav">
-            <button class="nav-item active" onclick="switchView('view-home')">
+            <button class="nav-item active" id="nav-home">
                 <span class="nav-icon">🏠</span><span class="nav-text">Home</span>
             </button>
-            <button class="nav-item">
-                <span class="nav-icon">📁</span><span class="nav-text">Albums</span>
+            <button class="nav-item" id="nav-delete">
+                <span class="nav-icon">🗑️</span><span class="nav-text">Delete</span>
             </button>
             
-            <!-- Upload Button (Center FAB) -->
             <div class="nav-fab-wrapper">
                 <button id="upload-fab" class="fab-btn">+</button>
                 <input type="file" id="image-upload-input" accept="image/*" multiple style="display: none;">
             </div>
 
-            <button class="nav-item">
-                <span class="nav-icon">❤️</span><span class="nav-text">Favs</span>
+            <button class="nav-item" id="nav-empty" style="opacity:0.3; cursor:default;">
+                <span class="nav-icon">✨</span><span class="nav-text">Favs</span>
             </button>
             <a href="admin.html" class="nav-item" style="text-decoration: none; color: inherit;">
                 <span class="nav-icon">👤</span><span class="nav-text">Admin</span>
