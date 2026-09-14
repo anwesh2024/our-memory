@@ -6,7 +6,6 @@
     --shadow: 0 4px 15px rgba(255, 77, 109, 0.1);
 }
 
-/* 4 Professional Themes */
 body.theme-light { }
 body.theme-amoled { --bg-color: #000000; --card-bg: #121212; --text-primary: #ffffff; --text-secondary: #a0a0a0; --accent: #ff3366; --nav-bg: #121212; --shadow: 0 4px 15px rgba(255, 51, 102, 0.15); }
 body.theme-pink { --bg-color: #ffe6ea; --card-bg: #ffffff; --text-primary: #5a3e4e; --text-secondary: #907080; --accent: #d81b60; --nav-bg: #ffffff; }
@@ -16,10 +15,10 @@ body.theme-ocean { --bg-color: #f0f8ff; --card-bg: #ffffff; --text-primary: #1a3
 body { background: var(--bg-color); color: var(--text-primary); transition: background 0.3s ease, color 0.3s ease; overflow-x: hidden; }
 
 .screen { display: none; min-height: 100vh; }
-.screen.active-screen { display: block; }
+.screen.active-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+#gallery-screen.active-screen { display: block; }
 
 /* Entry Screen */
-#entry-screen { display: flex; align-items: center; justify-content: center; text-align: center; }
 .cursive-title { font-family: 'Great Vibes', cursive; font-size: 4.5rem; color: var(--accent); line-height: 1.1; margin-bottom: 10px; }
 .subtitle { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 40px; }
 .primary-btn { background: var(--accent); color: #fff; border: none; padding: 15px 40px; font-size: 1.2rem; font-weight: 600; border-radius: 30px; cursor: pointer; box-shadow: var(--shadow); transition: transform 0.2s; }
@@ -32,25 +31,49 @@ body { background: var(--bg-color); color: var(--text-primary); transition: back
 .icon-btn { background: transparent; border: none; color: var(--accent); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
 .icon-btn:active { transform: scale(0.8); }
 
-/* 4 Grid Layouts */
-#gallery-grid { padding: 15px; padding-bottom: 100px; transition: all 0.3s ease; }
-.layout-1col { display: grid; grid-template-columns: 1fr; gap: 15px; }
-.layout-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.layout-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-.layout-masonry { columns: 2; column-gap: 10px; }
+#gallery-grid { padding-bottom: 100px; transition: all 0.3s ease; width: 100%; }
 
-.img-wrapper { position: relative; width: 100%; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 10px; }
-.layout-masonry .img-wrapper { display: inline-block; width: 100%; }
-.img-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; aspect-ratio: 1; }
-.layout-masonry .img-wrapper img { aspect-ratio: auto; }
+/* --- THE 5 MAGICAL GRID DESIGNS --- */
+
+/* Base Image Wrapper Rules */
+.img-wrapper { position: relative; width: 100%; overflow: hidden; box-shadow: var(--shadow); break-inside: avoid; }
+.img-wrapper img { width: 100%; display: block; object-fit: cover; }
+
+/* 1. Grid Style 1: 3-Col Masonry (Minimal Gap) */
+.grid-style-1 { columns: 3; column-gap: 4px; padding: 4px; }
+.grid-style-1 .img-wrapper { margin-bottom: 4px; border-radius: 4px; display: block; }
+.grid-style-1 .img-wrapper img { aspect-ratio: auto; }
+
+/* 2. Grid Style 2: 3-Col Square (No Gap Instagram Style) */
+.grid-style-2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; }
+.grid-style-2 .img-wrapper { border-radius: 2px; margin-bottom: 0; box-shadow: none; }
+.grid-style-2 .img-wrapper img { aspect-ratio: 1/1; }
+
+/* 3. Grid Style 3: 3-Col Rounded Masonry (Wide Gaps) */
+.grid-style-3 { columns: 3; column-gap: 12px; padding: 12px; }
+.grid-style-3 .img-wrapper { margin-bottom: 12px; border-radius: 16px; display: block; }
+.grid-style-3 .img-wrapper img { aspect-ratio: auto; }
+
+/* 4. Grid Style 4: Mixed Span Layout (Creative Grid) */
+.grid-style-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 12px; }
+.grid-style-4 .img-wrapper { border-radius: 12px; margin-bottom: 0; height: 100%; }
+.grid-style-4 .img-wrapper img { aspect-ratio: 1/1; height: 100%; }
+/* Every 3rd item spans 2 columns */
+.grid-style-4 .img-wrapper:nth-child(3n+1) { grid-column: 1 / -1; }
+.grid-style-4 .img-wrapper:nth-child(3n+1) img { aspect-ratio: 16/9; max-height: 250px; }
+
+/* 5. Grid Style 5: 2-Col Staggered Masonry (Classic Pinterest) */
+.grid-style-5 { columns: 2; column-gap: 14px; padding: 14px; }
+.grid-style-5 .img-wrapper { margin-bottom: 14px; border-radius: 18px; display: block; }
+.grid-style-5 .img-wrapper img { aspect-ratio: auto; }
 
 /* Delete Mode Overlay */
-.delete-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 0, 0, 0.4); display: none; align-items: center; justify-content: center; color: white; font-size: 2rem; cursor: pointer; }
+.delete-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 0, 0, 0.5); display: none; align-items: center; justify-content: center; color: white; font-size: 2rem; cursor: pointer; z-index: 10; backdrop-filter: blur(2px); }
 body.delete-mode .delete-overlay { display: flex; }
 
-.loading-text { text-align: center; font-size: 0.9rem; color: var(--text-secondary); width: 100%; padding: 20px 0; grid-column: 1 / -1; }
+.loading-text { text-align: center; font-size: 0.9rem; color: var(--text-secondary); width: 100%; padding: 20px 0; }
 
-/* Functional Bottom Nav */
+/* Bottom Nav */
 .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--nav-bg); display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -2px 15px rgba(0,0,0,0.05); border-top-left-radius: 25px; border-top-right-radius: 25px; z-index: 1000; }
 .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); cursor: pointer; width: 50px; transition: 0.2s; }
 .nav-item.active { color: var(--accent); }
