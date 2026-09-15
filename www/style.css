@@ -196,7 +196,3 @@ body.theme-aurora::before { opacity: 1; }
 .delete-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 0, 0, 0.4); display: none; align-items: center; justify-content: center; color: white; font-size: 2rem; cursor: pointer; z-index: 10; backdrop-filter: blur(2px); }
 body.delete-mode .delete-overlay { display: flex; }
 .loading-text { text-align: center; font-size: 0.9rem; color: var(--text-secondary); width: 100%; padding: 20px 0; }
-/* Fix for WebView Button Clicks */
-.icon-btn svg, .nav-item svg, .nav-icon { 
-    pointer-events: none; 
-}
