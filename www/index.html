@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Our Gallery</title>
-    <link rel="stylesheet" href="style.css?v=2.0">
+    <!-- ভার্সন ট্যাগ দেওয়া হয়েছে যাতে ক্যাশ ক্লিয়ার হয় -->
+    <link rel="stylesheet" href="style.css?v=3.0">
 </head>
 <body class="theme-light">
 
-    <!-- Simple Entry Screen -->
+    <!-- Entry Screen -->
     <div id="entry-screen" class="screen active-screen">
         <div class="entry-content">
             <h1 class="cursive-title">You & Me <span id="secret-heart" style="cursor:pointer;">❤️</span></h1>
@@ -17,24 +18,22 @@
         </div>
     </div>
 
-    <!-- Minimalist Gallery Screen -->
+    <!-- Gallery Screen -->
     <div id="gallery-screen" class="screen">
         <header class="app-header">
             <h2 class="cursive-title small-cursive">Our Moments</h2>
             <div class="header-actions">
                 <button id="layout-toggle" class="icon-btn" title="Change Grid">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                 </button>
                 <button id="theme-toggle" class="icon-btn" title="Change Theme">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                 </button>
             </div>
         </header>
 
-        <!-- Gallery Container (Starts with Grid Style 5) -->
         <div id="gallery-grid" class="grid-style-5"></div>
 
-        <!-- Fully Functional Bottom Navigation -->
         <nav class="bottom-nav">
             <button class="nav-item active" id="nav-home">
                 <span class="nav-icon">🏠</span><span class="nav-text">Home</span>
@@ -48,7 +47,7 @@
                 <input type="file" id="image-upload-input" accept="image/*" multiple style="display: none;">
             </div>
 
-            <button class="nav-item" id="nav-empty" style="opacity:0.3; cursor:default;">
+            <button class="nav-item" id="nav-favs">
                 <span class="nav-icon">✨</span><span class="nav-text">Favs</span>
             </button>
             <a href="admin.html" class="nav-item" style="text-decoration: none; color: inherit;">
@@ -57,6 +56,12 @@
         </nav>
     </div>
 
-    <script src="app.js?v=2.0"></script>
+    <!-- Fullscreen Modal -->
+    <div id="fullscreen-modal" class="fullscreen-modal">
+        <span class="close-modal" id="close-modal-btn">&times;</span>
+        <img id="fullscreen-img" src="" alt="">
+    </div>
+
+    <script src="app.js?v=3.0"></script>
 </body>
 </html>
