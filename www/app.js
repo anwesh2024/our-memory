@@ -252,7 +252,6 @@ safeClick('layout-toggle', () => {
         galleryContainer.className = ''; 
         layoutIdx = (layoutIdx + 1) % layouts.length;
         galleryContainer.classList.add(layouts[layoutIdx]);
-        loadImages(); 
     }
 });
 
