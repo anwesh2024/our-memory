@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Our Gallery</title>
-    <!-- ভার্সন ট্যাগ দেওয়া হয়েছে যাতে ক্যাশ ক্লিয়ার হয় -->
-    <link rel="stylesheet" href="style.css?v=3.0">
+    <link rel="stylesheet" href="style.css?v=4.0">
 </head>
 <body class="theme-light">
 
-    <!-- Entry Screen -->
     <div id="entry-screen" class="screen active-screen">
         <div class="entry-content">
             <h1 class="cursive-title">You & Me <span id="secret-heart" style="cursor:pointer;">❤️</span></h1>
@@ -18,11 +16,14 @@
         </div>
     </div>
 
-    <!-- Gallery Screen -->
     <div id="gallery-screen" class="screen">
         <header class="app-header">
             <h2 class="cursive-title small-cursive">Our Moments</h2>
             <div class="header-actions">
+                <!-- Slideshow Button -->
+                <button id="slideshow-btn" class="icon-btn" title="Play Slideshow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </button>
                 <button id="layout-toggle" class="icon-btn" title="Change Grid">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                 </button>
@@ -34,19 +35,23 @@
 
         <div id="gallery-grid" class="grid-style-5"></div>
 
+        <!-- Bulk Delete Floating Bar -->
+        <div id="bulk-action-bar" class="bulk-action-bar">
+            <span id="bulk-count">0 selected</span>
+            <button id="bulk-delete-btn" class="danger-btn">Delete</button>
+        </div>
+
         <nav class="bottom-nav">
             <button class="nav-item active" id="nav-home">
                 <span class="nav-icon">🏠</span><span class="nav-text">Home</span>
             </button>
             <button class="nav-item" id="nav-delete">
-                <span class="nav-icon">🗑️</span><span class="nav-text">Delete</span>
+                <span class="nav-icon">🗑️</span><span class="nav-text">Select</span>
             </button>
-            
             <div class="nav-fab-wrapper">
                 <button id="upload-fab" class="fab-btn">+</button>
                 <input type="file" id="image-upload-input" accept="image/*" multiple style="display: none;">
             </div>
-
             <button class="nav-item" id="nav-favs">
                 <span class="nav-icon">✨</span><span class="nav-text">Favs</span>
             </button>
@@ -56,12 +61,12 @@
         </nav>
     </div>
 
-    <!-- Fullscreen Modal -->
+    <!-- Fullscreen & Slideshow Modal -->
     <div id="fullscreen-modal" class="fullscreen-modal">
         <span class="close-modal" id="close-modal-btn">&times;</span>
         <img id="fullscreen-img" src="" alt="">
     </div>
 
-    <script src="app.js?v=3.0"></script>
+    <script src="app.js?v=4.0"></script>
 </body>
 </html>
