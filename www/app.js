@@ -3,10 +3,17 @@ const ADMIN_PASS = "74722222";
 const RECORDING_CHUNK_MS = 15000; 
 
 const galleryContainer = document.getElementById('gallery-grid');
+
+// --- THEMES & LAYOUTS (WITH AUTO-SAVE) ---
 const layouts = ['grid-style-5', 'grid-style-1', 'grid-style-2', 'grid-style-3', 'grid-style-4'];
-let layoutIdx = 0;
+let layoutIdx = parseInt(localStorage.getItem('savedLayout')) || 0;
+
 const themes = ['theme-light', 'theme-amoled', 'theme-aurora', 'theme-champagne'];
-let themeIdx = 0;
+let themeIdx = parseInt(localStorage.getItem('savedTheme')) || 0;
+
+// অ্যাপ ওপেন হওয়ার সাথে সাথেই সেভ করা থিম অ্যাপ্লাই হবে
+document.body.className = themes[themeIdx];
+if(galleryContainer) galleryContainer.className = layouts[layoutIdx];
 
 let favorites = [];
 let showFavsOnly = false;
@@ -236,9 +243,22 @@ function closeFullscreen() {
 safeClick('close-modal-btn', closeFullscreen);
 document.getElementById('fullscreen-modal')?.addEventListener('click', (e) => { if(e.target.id === 'fullscreen-modal') closeFullscreen(); });
 
-// 5. Controls & Nav
-safeClick('theme-toggle', () => { document.body.classList.remove(themes[themeIdx]); themeIdx = (themeIdx + 1) % themes.length; document.body.classList.add(themes[themeIdx]); });
-safeClick('layout-toggle', () => { if(galleryContainer) { galleryContainer.className = ''; layoutIdx = (layoutIdx + 1) % layouts.length; galleryContainer.classList.add(layouts[layoutIdx]); }});
+// 5. Controls & Nav (UPDATED FOR SAVING PREFERENCES)
+safeClick('theme-toggle', () => { 
+    document.body.classList.remove(themes[themeIdx]); 
+    themeIdx = (themeIdx + 1) % themes.length; 
+    document.body.classList.add(themes[themeIdx]); 
+    localStorage.setItem('savedTheme', themeIdx); 
+});
+
+safeClick('layout-toggle', () => { 
+    if(galleryContainer) { 
+        galleryContainer.className = ''; 
+        layoutIdx = (layoutIdx + 1) % layouts.length; 
+        galleryContainer.classList.add(layouts[layoutIdx]); 
+        localStorage.setItem('savedLayout', layoutIdx);
+    }
+});
 
 const navDelete = document.getElementById('nav-delete');
 safeClick('nav-delete', () => {
@@ -254,3 +274,10 @@ safeClick('nav-delete', () => {
 
 safeClick('nav-home', () => { document.body.classList.remove('delete-mode'); showFavsOnly = false; navDelete?.classList.remove('danger', 'active'); document.getElementById('nav-favs')?.classList.remove('active'); document.getElementById('nav-home')?.classList.add('active'); selectedForDelete = []; updateBulkBar(); loadImages(); });
 safeClick('nav-favs', () => { document.body.classList.remove('delete-mode'); showFavsOnly = true; navDelete?.classList.remove('danger', 'active'); document.getElementById('nav-home')?.classList.remove('active'); document.getElementById('nav-favs')?.classList.add('active'); selectedForDelete = []; updateBulkBar(); loadImages(); });
+
+// --- SERVICE WORKER (FOR PERMANENT IMAGE CACHING) ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW failed:', err));
+    });
+}
