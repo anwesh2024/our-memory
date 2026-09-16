@@ -109,6 +109,11 @@
     </div>
 
     <script>
+        // --- HARDWARE BACK BUTTON FIX ---
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+    window.location.href = 'index.html'; // ব্যাক চাপলে অ্যাপ না কেটে গ্যালারিতে যাবে
+};
         const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev';
         let currentPass = ''; let allFiles = [];
 
