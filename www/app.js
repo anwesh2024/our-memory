@@ -22,18 +22,27 @@ let selectedForDelete = []; // মাল্টিপল ডিলিটের �
 
 try { favorites = JSON.parse(localStorage.getItem('favs')) || []; } catch (e) {}
 
-function toggleFavorite(key) {
+function toggleFavorite(key, element) {
     try {
-        if (favorites.includes(key)) favorites = favorites.filter(k => k !== key);
-        else favorites.push(key);
+        let isFav = false;
+        if (favorites.includes(key)) {
+            favorites = favorites.filter(k => k !== key);
+        } else {
+            favorites.push(key);
+            isFav = true;
+        }
         localStorage.setItem('favs', JSON.stringify(favorites));
-        loadImages(); 
+        
+        // রিলোড না করে শুধু ইনস্ট্যান্ট আইকন বসানো/সরানো হবে
+        const badge = element.querySelector('.fav-badge');
+        if (isFav && !badge) {
+            element.insertAdjacentHTML('beforeend', '<div class="fav-badge">❤️</div>');
+        } else if (!isFav && badge) {
+            badge.remove();
+            // Favs পেজে থাকলে আন-ফেভারিট করলে সাথে সাথে হাইড হবে
+            if(showFavsOnly) element.style.display = 'none'; 
+        }
     } catch(e) {}
-}
-
-function safeClick(id, callback) {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('click', callback);
 }
 
 // 1. Entry & Recording
