@@ -100,13 +100,19 @@
     </div>
 
     <script>
-        // --- HARDWARE BACK BUTTON FIX ---
-        history.pushState(null, null, location.href);
-        window.onpopstate = function () {
-            window.location.href = 'index.html'; // ব্যাক চাপলে অ্যাপ না কেটে গ্যালারিতে যাবে
+        // --- FOOLPROOF BACK BUTTON FIX ---
+        window.onload = function() {
+            // পেজ লোড হওয়ার পর একটি নকল হিস্ট্রি তৈরি করবে
+            window.history.pushState("no-back", null, null);
+            
+            // ইউজার ব্যাক বাটনে চাপ দিলে জোর করে গ্যালারিতে পাঠাবে
+            window.onpopstate = function() {
+                window.location.replace("index.html");
+            };
         };
 
         const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev';
+        // ... (আপনার admin.html এর বাকি সব জাভাস্ক্রিপ্ট কোড ঠিক আগের মতোই থাকবে)
         let currentPass = ''; let allFiles = [];
 
         async function login() {
