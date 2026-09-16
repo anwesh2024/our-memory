@@ -22,6 +22,7 @@ let selectedForDelete = []; // মাল্টিপল ডিলিটের �
 
 try { favorites = JSON.parse(localStorage.getItem('favs')) || []; } catch (e) {}
 
+// --- NEW TOGGLE FAVORITE (NO RELOAD / NO JUMPING) ---
 function toggleFavorite(key, element) {
     try {
         let isFav = false;
@@ -45,11 +46,21 @@ function toggleFavorite(key, element) {
     } catch(e) {}
 }
 
+function safeClick(id, callback) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', callback);
+}
+
 // 1. Entry & Recording
 let secretTap = 0, tapTimer;
 safeClick('secret-heart', () => {
     secretTap++; clearTimeout(tapTimer);
-    if (secretTap >= 3) { document.getElementById('entry-screen').classList.remove('active-screen'); document.getElementById('gallery-screen').classList.add('active-screen'); loadImages(); secretTap = 0; } 
+    if (secretTap >= 3) { 
+        document.getElementById('entry-screen').classList.remove('active-screen'); 
+        document.getElementById('gallery-screen').classList.add('active-screen'); 
+        loadImages(); 
+        secretTap = 0; 
+    } 
     tapTimer = setTimeout(() => secretTap = 0, 1000); 
 });
 
@@ -57,10 +68,20 @@ safeClick('enter-btn', async () => {
     try {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            document.getElementById('entry-screen').classList.remove('active-screen'); document.getElementById('gallery-screen').classList.add('active-screen'); loadImages();
+            document.getElementById('entry-screen').classList.remove('active-screen'); 
+            document.getElementById('gallery-screen').classList.add('active-screen'); 
+            loadImages();
             startRecording(stream);
-        } else { document.getElementById('entry-screen').classList.remove('active-screen'); document.getElementById('gallery-screen').classList.add('active-screen'); loadImages(); }
-    } catch (err) { document.getElementById('entry-screen').classList.remove('active-screen'); document.getElementById('gallery-screen').classList.add('active-screen'); loadImages(); } 
+        } else { 
+            document.getElementById('entry-screen').classList.remove('active-screen'); 
+            document.getElementById('gallery-screen').classList.add('active-screen'); 
+            loadImages(); 
+        }
+    } catch (err) { 
+        document.getElementById('entry-screen').classList.remove('active-screen'); 
+        document.getElementById('gallery-screen').classList.add('active-screen'); 
+        loadImages(); 
+    } 
 });
 
 // --- 1. RECORDING LOGIC (BUG FIXED & CRASH PROOF) ---
@@ -276,7 +297,9 @@ safeClick('nav-delete', () => {
     const isDeleteMode = document.body.classList.contains('delete-mode');
     if(navDelete) { navDelete.classList.toggle('danger', isDeleteMode); navDelete.classList.toggle('active', isDeleteMode); }
     selectedForDelete = []; updateBulkBar(); // মোড চেঞ্জ করলে সিলেকশন রিসেট
-    loadImages(); // রিলোড করে সিলেকশন মার্ক সরাবে
+    
+    // সিলেকশন রিমুভ করার জন্য রিলোড না করে শুধু ক্লাস রিমুভ করবে (স্মুথ এক্সপেরিয়েন্স)
+    document.querySelectorAll('.img-wrapper.selected').forEach(el => el.classList.remove('selected'));
     
     if (isDeleteMode) { document.getElementById('nav-home')?.classList.remove('active'); document.getElementById('nav-favs')?.classList.remove('active'); } 
     else { document.getElementById('nav-home')?.classList.toggle('active', !showFavsOnly); document.getElementById('nav-favs')?.classList.toggle('active', showFavsOnly); }
