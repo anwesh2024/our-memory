@@ -3,76 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #ec4899; }
+        :root { --bg: #09090b; --card: #18181b; --text: #fafafa; --text-muted: #a1a1aa; --accent: #3b82f6; --accent-hover: #2563eb; --danger: #ef4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); color: var(--text); padding: 20px; padding-bottom: 80px; }
+        body { background: var(--bg); color: var(--text); padding: 20px; padding-bottom: 100px; }
         
-        .box { background: var(--card); padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 600px; margin: 20px auto; border: 1px solid rgba(255,255,255,0.05); }
-        h2 { margin-bottom: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        /* Premium Boxes */
+        .glass-box { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); max-width: 650px; margin: 20px auto; border: 1px solid rgba(255,255,255,0.05); }
+        h2 { font-weight: 600; font-size: 1.5rem; margin-bottom: 25px; letter-spacing: -0.5px; }
         
-        input[type="password"], input[type="date"] { width: 100%; padding: 12px; margin: 10px 0; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 8px; outline: none; }
-        button { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        button:active { transform: scale(0.95); }
-        .btn-primary { background: linear-gradient(135deg, #ec4899, #8b5cf6); color: white; width: 100%; }
+        input { width: 100%; padding: 14px; margin: 10px 0; background: #09090b; border: 1px solid #27272a; color: white; border-radius: 12px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--accent); }
         
-        /* Progress Bar */
-        .storage-info { font-size: 0.85rem; color: #94a3b8; margin-top: 5px; }
-        .progress-bg { background: #0f172a; border-radius: 10px; width: 100%; height: 10px; margin: 10px 0 20px; overflow: hidden; border: 1px solid #334155; }
-        .progress-fill { background: linear-gradient(90deg, #10b981, #3b82f6); height: 100%; width: 0%; transition: width 1s ease; }
-        .progress-fill.danger { background: linear-gradient(90deg, #f59e0b, #ef4444); }
-
+        .btn { padding: 12px 20px; border: none; border-radius: 12px; cursor: pointer; font-weight: 500; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: var(--accent); color: white; width: 100%; font-size: 1.1rem; }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+        
+        /* Storage Bar */
+        .storage-info { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .progress-bg { background: #27272a; border-radius: 20px; width: 100%; height: 8px; margin-bottom: 25px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, #3b82f6, #8b5cf6); height: 100%; width: 0%; transition: width 1s ease; border-radius: 20px; }
+        
         /* Toolbar */
-        .toolbar { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; background: #0f172a; padding: 10px; border-radius: 10px; }
-        .btn-del-bulk { background: #ef4444; color: white; padding: 8px 15px; font-size: 0.85rem; }
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #09090b; padding: 12px 15px; border-radius: 14px; border: 1px solid #27272a; }
+        .toolbar-left { display: flex; align-items: center; gap: 15px; }
         
-        /* Video List */
-        .file-item { display: flex; gap: 15px; background: #0f172a; padding: 12px; border-radius: 10px; margin-bottom: 12px; align-items: center; border: 1px solid #334155; transition: 0.2s; }
-        .file-item:hover { border-color: var(--accent); }
-        .thumb-wrapper { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; background: #000; flex-shrink: 0;}
+        /* Video List Modern */
+        .file-item { display: flex; gap: 15px; background: #09090b; padding: 12px; border-radius: 16px; margin-bottom: 15px; align-items: center; border: 1px solid #27272a; transition: all 0.3s ease; }
+        .file-item:hover { border-color: var(--accent); transform: translateY(-2px); }
+        
+        .thumb-wrapper { position: relative; width: 70px; height: 70px; border-radius: 12px; overflow: hidden; background: #27272a; flex-shrink: 0; cursor: pointer; }
         .thumb-wrapper video { width: 100%; height: 100%; object-fit: cover; }
-        .play-icon { position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.5); padding: 5px; border-radius: 50%; color: white; font-size: 0.8rem; pointer-events: none;}
+        .play-icon { position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); padding: 8px; border-radius: 50%; color: white; display: flex; pointer-events: none; }
+        .play-icon svg { width: 14px; height: 14px; fill: white; }
         
         .file-info { flex-grow: 1; overflow: hidden; }
-        .file-name { font-size: 0.9rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #e2e8f0;}
-        .file-meta { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
+        .file-name { font-size: 0.95rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; display: flex; gap: 10px; }
+        .file-meta span { background: #27272a; padding: 2px 8px; border-radius: 6px; }
         
-        .check-box { width: 22px; height: 22px; accent-color: var(--accent); cursor: pointer; }
+        .check-box { width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer; }
+
+        /* Video Player Modal */
+        .video-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .video-modal.active { display: flex; }
+        .video-player-container { width: 90%; max-width: 500px; background: #18181b; padding: 10px; border-radius: 20px; border: 1px solid #27272a; }
+        video { width: 100%; border-radius: 12px; outline: none; }
+        .close-modal { color: white; font-size: 2rem; position: absolute; top: 20px; right: 25px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="login-box" class="box" style="text-align: center; margin-top: 15vh;">
-        <h2>🔒 Security Gateway</h2>
+    <div id="login-box" class="glass-box" style="text-align: center; margin-top: 20vh;">
+        <h2>Security Gateway</h2>
         <input type="password" id="admin-pass" placeholder="Enter Master Key">
-        <button onclick="login()" class="btn-primary">Unlock Dashboard</button>
-        <a href="index.html" style="display: block; margin-top: 20px; color: #94a3b8; text-decoration: none; font-size: 0.9rem;">← Back to Gallery</a>
+        <button onclick="login()" class="btn btn-primary">Unlock System</button>
     </div>
 
-    <div id="dashboard" class="box" style="display: none; max-width: 800px;">
-        <h2>🎛️ Command Center</h2>
+    <div id="dashboard" class="glass-box" style="display: none;">
+        <h2>Command Center</h2>
         
-        <!-- Storage Bar -->
-        <div class="storage-info" id="storage-text">Calculating Storage...</div>
+        <div class="storage-info">
+            <span id="storage-text">Calculating...</span>
+            <span id="storage-count">0 files</span>
+        </div>
         <div class="progress-bg"><div class="progress-fill" id="storage-bar"></div></div>
         
-        <!-- Filter & Bulk Options -->
         <div class="toolbar">
-            <input type="checkbox" id="select-all" class="check-box" onclick="toggleSelectAll()">
-            <input type="date" id="date-filter" onchange="renderFiles()">
-            <button onclick="bulkDelete()" class="btn-del-bulk">🗑️ Delete Selected</button>
+            <div class="toolbar-left">
+                <input type="checkbox" id="select-all" class="check-box" onclick="toggleSelectAll()">
+                <span style="font-size: 0.9rem; color: var(--text-muted);">Select All</span>
+            </div>
+            <button onclick="bulkDelete()" class="btn btn-danger">Delete</button>
         </div>
         
         <div id="file-list"></div>
     </div>
 
+    <!-- Custom Player Modal -->
+    <div id="vid-modal" class="video-modal">
+        <span class="close-modal" onclick="closePlayer()">&times;</span>
+        <div class="video-player-container">
+            <video id="main-player" controls playsinline></video>
+        </div>
+    </div>
+
     <script>
         const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev';
-        let currentPass = '';
-        let allFiles = [];
-        const MAX_STORAGE_GB = 10; // Cloudflare Free Tier (10GB)
+        let currentPass = ''; let allFiles = [];
 
         async function login() {
             currentPass = document.getElementById('admin-pass').value;
@@ -81,52 +102,43 @@
                 document.getElementById('login-box').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
                 const data = await res.json();
-                allFiles = data.files.filter(f => f.key.startsWith('reaction-')); // শুধু ভিডিও
-                updateStorage(data.totalSize);
-                renderFiles();
+                // 0.00 MB এর বাগ ফাইলগুলো আগেই বাদ দিয়ে দিচ্ছি
+                allFiles = data.files.filter(f => f.key.startsWith('reaction-') && f.size > 20000); 
+                updateStorage(data.totalSize); renderFiles();
             } else alert("Access Denied!");
         }
 
         function updateStorage(usedBytes) {
             const usedMB = (usedBytes / (1024 * 1024)).toFixed(1);
-            const usedGB = (usedBytes / (1024 * 1024 * 1024)).toFixed(2);
-            const percent = (usedGB / MAX_STORAGE_GB) * 100;
-            
-            document.getElementById('storage-text').innerHTML = `Storage Used: <b>${usedGB} GB</b> of ${MAX_STORAGE_GB} GB (${allFiles.length} videos)`;
-            const bar = document.getElementById('storage-bar');
-            bar.style.width = `${Math.min(percent, 100)}%`;
-            if(percent > 80) bar.classList.add('danger'); // 80% এর বেশি হলে লাল হবে
+            const percent = (usedMB / 10240) * 100; // 10GB limit
+            document.getElementById('storage-text').innerHTML = `<b>${usedMB} MB</b> used`;
+            document.getElementById('storage-count').innerText = `${allFiles.length} videos`;
+            document.getElementById('storage-bar').style.width = `${Math.min(percent, 100)}%`;
         }
 
         function renderFiles() {
             const list = document.getElementById('file-list');
-            const filterDate = document.getElementById('date-filter').value;
             list.innerHTML = '';
-            document.getElementById('select-all').checked = false;
+            
+            if(allFiles.length === 0) return list.innerHTML = '<p style="text-align:center; color:#a1a1aa; padding: 20px;">No videos found.</p>';
 
-            const filteredFiles = allFiles.filter(f => {
-                if(!filterDate) return true;
-                return new Date(f.uploaded).toISOString().split('T')[0] === filterDate; // তারিখ অনুযায়ী ফিল্টার
-            });
-
-            if(filteredFiles.length === 0) return list.innerHTML = '<p style="color:#94a3b8; text-align:center;">No videos found.</p>';
-
-            filteredFiles.forEach(f => {
-                const date = new Date(f.uploaded).toLocaleString();
+            allFiles.forEach(f => {
+                const date = new Date(f.uploaded).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const shortDate = new Date(f.uploaded).toLocaleDateString();
                 const videoUrl = `${WORKER_URL}/api/admin/video/${f.key}?pass=${currentPass}`;
+                const sizeMB = (f.size / (1024*1024)).toFixed(2);
                 
                 const item = document.createElement('div');
                 item.className = 'file-item';
                 item.innerHTML = `
                     <input type="checkbox" class="check-box file-cb" value="${f.key}">
-                    <div class="thumb-wrapper" onclick="window.open('${videoUrl}', '_blank')" style="cursor:pointer;">
-                        <!-- Thumbnail Magic: preload="metadata" #t=0.1 -->
-                        <video src="${videoUrl}#t=0.1" preload="metadata" muted playsinline></video>
-                        <div class="play-icon">▶</div>
+                    <div class="thumb-wrapper" onclick="playVideo('${videoUrl}')">
+                        <video src="${videoUrl}#t=0.5" preload="metadata" muted></video>
+                        <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
                     </div>
                     <div class="file-info">
-                        <div class="file-name">${f.key}</div>
-                        <div class="file-meta">📅 ${date} • ${(f.size / (1024*1024)).toFixed(2)} MB</div>
+                        <div class="file-name">${f.key.replace('reaction-', 'Vid-').replace('.webm', '')}</div>
+                        <div class="file-meta"><span>${shortDate}</span><span>${date}</span><span>${sizeMB} MB</span></div>
                     </div>
                 `;
                 list.appendChild(item);
@@ -140,21 +152,26 @@
 
         async function bulkDelete() {
             const checked = document.querySelectorAll('.file-cb:checked');
-            if(checked.length === 0) return alert("Select videos first!");
-            if(!confirm(`Permanently delete ${checked.length} videos?`)) return;
+            if(checked.length === 0) return;
+            if(!confirm(`Delete ${checked.length} videos permanently?`)) return;
 
             const keys = Array.from(checked).map(cb => cb.value);
             const res = await fetch(`${WORKER_URL}/api/admin/files/bulk`, {
-                method: 'DELETE',
-                headers: { 'X-Admin-Password': currentPass, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ keys })
+                method: 'DELETE', headers: { 'X-Admin-Password': currentPass, 'Content-Type': 'application/json' }, body: JSON.stringify({ keys })
             });
-            
-            if(res.ok) {
-                // সফল হলে লিস্ট থেকে বাদ দিয়ে রিফ্রেশ
-                allFiles = allFiles.filter(f => !keys.includes(f.key));
-                renderFiles();
-            } else alert("Failed to delete");
+            if(res.ok) { allFiles = allFiles.filter(f => !keys.includes(f.key)); renderFiles(); document.getElementById('select-all').checked = false; }
+        }
+
+        function playVideo(url) {
+            const modal = document.getElementById('vid-modal');
+            const player = document.getElementById('main-player');
+            player.src = url; modal.classList.add('active'); player.play();
+        }
+
+        function closePlayer() {
+            const modal = document.getElementById('vid-modal');
+            const player = document.getElementById('main-player');
+            player.pause(); player.src = ''; modal.classList.remove('active');
         }
     </script>
 </body>
