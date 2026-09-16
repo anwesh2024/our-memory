@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Our Gallery</title>
-    <link rel="stylesheet" href="style.css?v=4.0">
+    <link rel="stylesheet" href="style.css?v=5.0">
 </head>
 <body class="theme-light">
 
@@ -20,53 +20,52 @@
         <header class="app-header">
             <h2 class="cursive-title small-cursive">Our Moments</h2>
             <div class="header-actions">
-                <!-- Slideshow Button -->
-                <button id="slideshow-btn" class="icon-btn" title="Play Slideshow">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                </button>
-                <button id="layout-toggle" class="icon-btn" title="Change Grid">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-                </button>
-                <button id="theme-toggle" class="icon-btn" title="Change Theme">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                </button>
+                <button id="slideshow-btn" class="icon-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+                <button id="layout-toggle" class="icon-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></button>
+                <button id="theme-toggle" class="icon-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
             </div>
         </header>
 
         <div id="gallery-grid" class="grid-style-5"></div>
 
-        <!-- Bulk Delete Floating Bar -->
         <div id="bulk-action-bar" class="bulk-action-bar">
             <span id="bulk-count">0 selected</span>
             <button id="bulk-delete-btn" class="danger-btn">Delete</button>
         </div>
 
-        <nav class="bottom-nav">
+        <!-- Modern Floating Pill Navigation -->
+        <nav class="bottom-nav-pill">
             <button class="nav-item active" id="nav-home">
-                <span class="nav-icon">🏠</span><span class="nav-text">Home</span>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                <span class="nav-text">Home</span>
             </button>
             <button class="nav-item" id="nav-delete">
-                <span class="nav-icon">🗑️</span><span class="nav-text">Select</span>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span class="nav-text">Select</span>
             </button>
+            
             <div class="nav-fab-wrapper">
-                <button id="upload-fab" class="fab-btn">+</button>
+                <button id="upload-fab" class="fab-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
                 <input type="file" id="image-upload-input" accept="image/*" multiple style="display: none;">
             </div>
+
             <button class="nav-item" id="nav-favs">
-                <span class="nav-icon">✨</span><span class="nav-text">Favs</span>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span class="nav-text">Favs</span>
             </button>
             <a href="admin.html" class="nav-item" style="text-decoration: none; color: inherit;">
-                <span class="nav-icon">👤</span><span class="nav-text">Admin</span>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="nav-text">Admin</span>
             </a>
         </nav>
     </div>
 
-    <!-- Fullscreen & Slideshow Modal -->
+    <!-- Modals remain the same -->
     <div id="fullscreen-modal" class="fullscreen-modal">
         <span class="close-modal" id="close-modal-btn">&times;</span>
         <img id="fullscreen-img" src="" alt="">
     </div>
 
-    <script src="app.js?v=4.0"></script>
+    <script src="app.js?v=5.0"></script>
 </body>
 </html>
