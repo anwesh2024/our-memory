@@ -138,12 +138,15 @@ body.theme-aurora::before { opacity: 1; }
 .img-wrapper:active { transform: scale(0.98); box-shadow: var(--shadow), var(--glow); } 
 .img-wrapper:active img { opacity: 0.85; }
 
-/* Favorite Badge */
+/* --- SMALL FAVORITE BADGE --- */
 .fav-badge { 
-    position: absolute; bottom: 8px; right: 8px; font-size: 1rem; 
+    position: absolute; bottom: 8px; right: 8px; 
+    font-size: 0.75rem; /* আইকন ছোট করা হয়েছে */
     background: var(--nav-bg); backdrop-filter: var(--glass); border: var(--border);
-    border-radius: 50%; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; 
-    box-shadow: var(--shadow), var(--glow); z-index: 5; pointer-events: none; transition: all 0.5s ease;
+    border-radius: 50%; 
+    width: 22px; height: 22px; /* সাইজ কমানো হয়েছে */
+    display: flex; justify-content: center; align-items: center; 
+    box-shadow: var(--shadow), var(--glow); z-index: 5; pointer-events: none; transition: all 0.3s ease;
 }
 
 /* Grid Styles (Same as before) */
