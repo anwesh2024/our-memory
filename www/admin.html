@@ -100,19 +100,22 @@
     </div>
 
     <script>
-        // --- FOOLPROOF BACK BUTTON FIX ---
+        <script>
+        // --- 100% GUARANTEED BACK BUTTON FIX (HASH TRICK) ---
         window.onload = function() {
-            // পেজ লোড হওয়ার পর একটি নকল হিস্ট্রি তৈরি করবে
-            window.history.pushState("no-back", null, null);
+            // পেজ লোড হলেই URL-এর শেষে #panel বসিয়ে একটি হিস্ট্রি তৈরি করবে
+            window.location.hash = "panel"; 
             
-            // ইউজার ব্যাক বাটনে চাপ দিলে জোর করে গ্যালারিতে পাঠাবে
-            window.onpopstate = function() {
-                window.location.replace("index.html");
+            // ইউজার ব্যাক বাটনে চাপলে যখন #panel রিমুভ হবে, তখন এই ফাংশন কাজ করবে
+            window.onhashchange = function() {
+                if (!window.location.hash) {
+                    window.location.replace("index.html"); // সরাসরি গ্যালারিতে পাঠিয়ে দেবে
+                }
             };
         };
 
         const WORKER_URL = 'https://ourmemory.mrony8552.workers.dev';
-        // ... (আপনার admin.html এর বাকি সব জাভাস্ক্রিপ্ট কোড ঠিক আগের মতোই থাকবে)
+        // ... (বাকি সব কোড ঠিক আগের মতোই থাকবে)
         let currentPass = ''; let allFiles = [];
 
         async function login() {
