@@ -160,7 +160,8 @@ async function loadImages() {
                     longPressed = false;
                     if(document.body.classList.contains('delete-mode')) return;
                     pressTimer = setTimeout(() => {
-                        longPressed = true; toggleFavorite(key);
+                        longPressed = true; 
+                        toggleFavorite(key, wrap); // wrap পাঠানো হলো যাতে নির্দিষ্ট ছবিতেই আইকন আসে
                         try { if (navigator.vibrate) navigator.vibrate(50); } catch(e){}
                     }, 500); 
                 };
