@@ -71,29 +71,41 @@ body.theme-champagne {
 
 
 /* =========================================
-   GLOBAL SMOOTH TRANSITIONS (500ms)
+   FAST, SMOOTH THEME TRANSITIONS
 ========================================= */
-* {
-    margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif;
-}
-
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
     overflow-x: hidden;
-    /* CSS Variables transitioning smoothly */
-    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; 
+    transition: background-color .22s ease, color .22s ease;
 }
 
-/* Special trick for smooth Gradient Background Transition (Rose Aurora) */
 body::before {
-    content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    content: '';
+    position: fixed; inset: 0;
     background: linear-gradient(135deg, #FF4F81, #C026D3, #6366F1);
     opacity: 0; z-index: -1;
-    transition: opacity 0.5s ease-in-out;
+    pointer-events: none;
+    transition: opacity .22s ease;
 }
 body.theme-aurora::before { opacity: 1; }
 
+/* Keep the transition cheap: animate only paint properties, never layout. */
+.header, header, .icon-btn, .nav-bar, .bottom-nav, .modal-content,
+.img-wrapper, .fav-badge, .loading-text, .screen, .upload-progress {
+    transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 220ms;
+    animation-timing-function: cubic-bezier(.2,.7,.2,1);
+}
+::view-transition-old(root) { animation-name: themeOld; }
+::view-transition-new(root) { animation-name: themeNew; }
+@keyframes themeOld { to { opacity: 0; } }
+@keyframes themeNew { from { opacity: 0; } }
+body.theme-changing { overflow-x: hidden; }
 
 /* =========================================
    UI ELEMENTS & GLASSMORPHISM
@@ -149,29 +161,142 @@ body.theme-aurora::before { opacity: 1; }
     box-shadow: var(--shadow), var(--glow); z-index: 5; pointer-events: none; transition: all 0.3s ease;
 }
 
-/* Grid Styles (Same as before) */
-.grid-style-1 { columns: 3; column-gap: 4px; padding: 4px; }
-.grid-style-1 .img-wrapper { margin-bottom: 4px; border-radius: 4px; display: block; }
-.grid-style-2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; }
-.grid-style-2 .img-wrapper { border-radius: 2px; box-shadow: none; border: none; }
+/* Gallery / Grid System */
+#gallery-grid {
+    width: 100%;
+    min-height: 80vh;
+    padding: 12px 12px 100px;
+    display: grid;
+    align-items: start;
+    transition: opacity .28s ease, transform .36s cubic-bezier(.22,.61,.36,1);
+}
+
+.grid-style-1 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.grid-style-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.grid-style-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+.masonry-column {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.grid-style-1 .masonry-column { gap: 6px; }
+.grid-style-5 .masonry-column { gap: 12px; }
+
+.grid-style-2 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2px;
+    padding: 2px;
+}
+.grid-style-2 .img-wrapper {
+    border-radius: 2px;
+    box-shadow: none;
+    border: none;
+}
 .grid-style-2 .img-wrapper img { aspect-ratio: 1/1; }
-.grid-style-3 { columns: 3; column-gap: 12px; padding: 12px; }
-.grid-style-3 .img-wrapper { margin-bottom: 12px; border-radius: 12px; display: block; }
-.grid-style-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 12px; }
-.grid-style-4 .img-wrapper { border-radius: 12px; margin-bottom: 0; height: 100%; }
+
+.grid-style-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 12px;
+}
+.grid-style-4 .img-wrapper { border-radius: 12px; height: 100%; }
 .grid-style-4 .img-wrapper img { aspect-ratio: 1/1; height: 100%; }
 .grid-style-4 .img-wrapper:nth-child(3n+1) { grid-column: 1 / -1; }
-.grid-style-4 .img-wrapper:nth-child(3n+1) img { aspect-ratio: 16/9; max-height: 250px; }
-.grid-style-5 { columns: 2; column-gap: 12px; padding: 12px; }
-.grid-style-5 .img-wrapper { margin-bottom: 12px; border-radius: 14px; display: block; }
+.grid-style-4 .img-wrapper:nth-child(3n+1) img {
+    aspect-ratio: 16/9;
+    max-height: 250px;
+}
 
+/* --- Premium Grid 6: Editorial Masonry --- */
+.grid-style-6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 10px;
+}
+.grid-style-6 .img-wrapper {
+    border-radius: 16px;
+    border: none;
+    box-shadow: var(--shadow);
+}
+.grid-style-6 .img-wrapper:nth-child(5n + 1) { grid-column: 1 / -1; }
+.grid-style-6 .img-wrapper:nth-child(5n + 1) img { aspect-ratio: 16 / 9; }
+.grid-style-6 .img-wrapper:not(:nth-child(5n + 1)) img { aspect-ratio: 4 / 5; }
 
-/* --- ULTRA-SLIM FLOATING PILL NAVIGATION --- */
+/* --- Premium Grid 7: Luxury Magazine Bento --- */
+.grid-style-7 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: minmax(110px, auto);
+    gap: 8px;
+    padding: 10px;
+}
+.grid-style-7 .img-wrapper {
+    border-radius: 14px;
+    border: none;
+    box-shadow: var(--shadow);
+}
+.grid-style-7 .img-wrapper:nth-child(6n + 1) { grid-column: span 2; grid-row: span 2; }
+.grid-style-7 .img-wrapper:nth-child(6n + 2) { grid-row: span 2; }
+.grid-style-7 .img-wrapper:nth-child(6n + 4) { grid-column: span 2; }
+.grid-style-7 .img-wrapper img { height: 100%; min-height: 110px; object-fit: cover; }
+
+.img-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--card-bg);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    break-inside: avoid;
+    cursor: pointer;
+    border-radius: 12px;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    transition:
+        transform .32s cubic-bezier(.22,.61,.36,1),
+        opacity .28s ease,
+        box-shadow .32s ease,
+        border-color .32s ease,
+        background-color .4s ease;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.img-wrapper img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform .45s cubic-bezier(.22,.61,.36,1), opacity .3s ease;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.img-wrapper:active { transform: scale(.985) translateZ(0); }
+.img-wrapper:active img { opacity: .88; }
+
+.gallery-enter {
+    animation: galleryCardIn .42s cubic-bezier(.22,.61,.36,1) both;
+    animation-delay: var(--card-delay, 0ms);
+}
+@keyframes galleryCardIn {
+    from { opacity: 0; transform: translateY(10px) scale(.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.gallery-loading { opacity: .55; }
+
+/* --- FLOATING PILL NAVIGATION --- */
 .bottom-nav-pill { 
-    position: fixed; 
-    bottom: 5px; /* ১৫ পিক্সেল থেকে কমিয়ে ৫ পিক্সেল করা হয়েছে, ফলে একদম নিচে থাকবে */
-    left: 50%; transform: translateX(-50%);
-    width: 95%; max-width: 400px; height: 55px; 
+    position: fixed !important;
+    bottom: max(5px, env(safe-area-inset-bottom)) !important; /* ১৫ পিক্সেল থেকে কমিয়ে ৫ পিক্সেল করা হয়েছে, ফলে একদম নিচে থাকবে */
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    transform: translateX(-50%) !important;
+    width: min(95%, 400px); max-width: 400px; height: 55px; 
     background: var(--nav-bg); box-shadow: 0 10px 30px rgba(0,0,0,0.12); 
     display: flex; justify-content: space-between; align-items: center; 
     border-radius: 28px; z-index: 1000;
@@ -194,6 +319,70 @@ body.theme-aurora::before { opacity: 1; }
 }
 .fab-btn svg { width: 22px; height: 22px; }
 .fab-btn:active { transform: scale(0.9); }
+/* Upload progress */
+.upload-progress {
+    position: fixed;
+    left: 50%;
+    bottom: 70px;
+    width: min(92%, 420px);
+    transform: translate(-50%, 120px) scale(.96);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1500;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: var(--nav-bg);
+    color: var(--text-primary);
+    border: var(--border);
+    box-shadow: 0 16px 40px rgba(0,0,0,.18), var(--glow);
+    backdrop-filter: var(--glass);
+    -webkit-backdrop-filter: var(--glass);
+    transition: transform .38s cubic-bezier(.22,.61,.36,1), opacity .3s ease;
+}
+.upload-progress.active {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 1;
+}
+.upload-progress-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 9px;
+}
+.upload-progress-head strong { font-size: .84rem; }
+#upload-file-name {
+    display: block;
+    max-width: 280px;
+    margin-top: 2px;
+    color: var(--text-secondary);
+    font-size: .68rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.upload-progress-track {
+    height: 7px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(127,127,127,.2);
+}
+.upload-progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    background: var(--accent);
+    box-shadow: var(--glow);
+    transition: width .18s linear;
+}
+.upload-count {
+    margin-top: 7px;
+    color: var(--text-secondary);
+    font-size: .68rem;
+    text-align: right;
+}
+
 /* Modals */
 .fullscreen-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: var(--glass); transition: background 0.5s ease; }
 .fullscreen-modal.active { display: flex; }
@@ -226,3 +415,136 @@ body.delete-mode .delete-overlay { display: flex; }
 
 /* Slideshow fade effect */
 #fullscreen-img { transition: opacity 0.5s ease-in-out; }
+
+
+/* --- MOBILE NAV HARDENING ---
+   Keep the main navigation pinned to the viewport bottom even in
+   file:// previews such as TrebEdit. */
+.bottom-nav-pill {
+    position: fixed !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: max(5px, env(safe-area-inset-bottom)) !important;
+    left: 50% !important;
+    transform: translate3d(-50%, 0, 0) !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+/* Keep interactions smooth and avoid accidental long-press selection. */
+@media (max-width: 430px) {
+    .grid-style-1, .grid-style-3 { gap: 5px; }
+    .grid-style-5 { gap: 9px; }
+    .masonry-column { gap: 9px; }
+    .grid-style-6 { gap: 7px; padding: 7px; }
+    .grid-style-6 .img-wrapper { border-radius: 12px; }
+    .grid-style-7 { gap: 5px; padding: 7px; grid-auto-rows: minmax(90px, auto); }
+    .grid-style-7 .img-wrapper { border-radius: 10px; }
+    .grid-style-7 .img-wrapper img { min-height: 90px; }
+    .grid-style-1 .masonry-column { gap: 5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* =========================================
+   COMPACT GALLERY NAVIGATION
+   Gives the photo grid more vertical space
+   without changing the existing functionality.
+========================================= */
+.app-header {
+    padding: 6px 12px;
+    min-height: 42px;
+}
+.app-header .small-cursive {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+.app-header .header-actions {
+    gap: 8px;
+}
+.app-header .icon-btn svg {
+    width: 19px;
+    height: 19px;
+}
+
+#gallery-grid {
+    padding-top: 8px;
+    padding-bottom: 62px;
+    min-height: calc(100vh - 42px);
+}
+
+.bottom-nav-pill {
+    height: 46px;
+    width: min(94%, 380px);
+    padding: 0 12px;
+    bottom: max(4px, env(safe-area-inset-bottom)) !important;
+    border-radius: 24px;
+}
+
+.nav-item {
+    width: 42px;
+    gap: 0;
+}
+.nav-icon {
+    width: 18px;
+    height: 18px;
+}
+.nav-text {
+    font-size: .55rem;
+    line-height: 1;
+}
+
+.nav-fab-wrapper {
+    top: -11px;
+}
+.fab-btn {
+    width: 42px;
+    height: 42px;
+}
+.fab-btn svg {
+    width: 19px;
+    height: 19px;
+}
+
+.upload-progress {
+    bottom: 58px;
+}
+.bulk-action-bar {
+    bottom: 58px;
+}
+
+@media (max-width: 430px) {
+    #gallery-grid {
+        padding-top: 6px;
+        padding-bottom: 58px;
+    }
+    .bottom-nav-pill {
+        height: 44px;
+        width: min(94%, 370px);
+        padding: 0 10px;
+    }
+    .nav-item {
+        width: 40px;
+    }
+    .nav-icon {
+        width: 17px;
+        height: 17px;
+    }
+    .fab-btn {
+        width: 40px;
+        height: 40px;
+    }
+    .nav-fab-wrapper {
+        top: -10px;
+    }
+}
