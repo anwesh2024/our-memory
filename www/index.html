@@ -1,20 +1,735 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Our Gallery</title>
-    <link rel="stylesheet" href="style.css?v=5.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#d94f7d">
+<title>Our Gallery</title>
+<link rel="stylesheet" href="style.css?v=6.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+    :root {
+      --pink: #d84d7c;
+      --pink-dark: #b93665;
+      --pink-light: #ffdce8;
+      --white: #fffafd;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #f6c5d5;
+    }
+
+    body {
+      font-family: "Noto Serif Bengali", serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    /* =========================
+       FULL-SCREEN ENTRY
+    ========================== */
+    .intro {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      isolation: isolate;
+      background: #efb3c7;
+      color: var(--white);
+      transform: scale(1.025);
+      filter: blur(4px);
+      transition: transform .95s cubic-bezier(.22,.75,.2,1), filter .95s cubic-bezier(.22,.75,.2,1);
+    }
+
+    /* Soft light wash revealed as the PIN lock opens */
+    .intro::after {
+      content: "";
+      position: absolute;
+      inset: -12%;
+      z-index: 40;
+      pointer-events: none;
+      opacity: 1;
+      background: radial-gradient(circle at 50% 46%, rgba(255,255,255,.72) 0%, rgba(255,190,215,.34) 25%, rgba(255,120,175,.10) 48%, transparent 70%);
+      transform: scale(.82);
+      transition: opacity .9s ease, transform 1s cubic-bezier(.22,.75,.2,1);
+    }
+
+    .intro.unlocked {
+      transform: scale(1);
+      filter: blur(0);
+    }
+
+    .intro.unlocked::after {
+      opacity: 0;
+      transform: scale(1.28);
+    }
+
+    /* Background image */
+    .background {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 42%;
+      z-index: -5;
+      transform: scale(1.035);
+      filter: saturate(0.92) contrast(0.96);
+      animation: slowZoom 14s ease-in-out infinite alternate;
+    }
+
+    /* Pink cinematic layers */
+    .pink-tint {
+      position: absolute;
+      inset: 0;
+      z-index: -4;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255, 172, 199, 0.20) 0%,
+          rgba(224, 79, 128, 0.13) 43%,
+          rgba(102, 18, 53, 0.33) 100%
+        );
+    }
+
+    .text-shade {
+      position: absolute;
+      inset: 0;
+      z-index: -3;
+      background:
+        radial-gradient(
+          ellipse at 50% 42%,
+          rgba(80, 10, 38, 0.04) 0%,
+          rgba(80, 10, 38, 0.20) 55%,
+          rgba(55, 5, 28, 0.36) 100%
+        );
+    }
+
+    /* Soft pink glow */
+    .ambient-glow {
+      position: absolute;
+      width: 75vw;
+      height: 35vh;
+      left: 50%;
+      top: 36%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(
+        ellipse,
+        rgba(255, 190, 214, 0.18),
+        transparent 68%
+      );
+      filter: blur(28px);
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* =========================
+       PETAL LAYER
+    ========================== */
+    .petal-layer {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .falling-petal {
+      position: absolute;
+      top: -12vh;
+      left: 0;
+      width: var(--size);
+      height: var(--size);
+      animation:
+        petalFall var(--duration) var(--delay) linear infinite;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .petal-shape,
+    .petal-heart {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      transition:
+        opacity 0.8s ease,
+        transform 0.8s ease,
+        filter 0.8s ease;
+    }
+
+    .petal-shape {
+      font-size: var(--font-size);
+      line-height: 1;
+      transform: rotate(var(--rotation));
+      filter: drop-shadow(0 3px 7px rgba(80, 0, 35, 0.18));
+    }
+
+    .petal-heart {
+      opacity: 0;
+      font-size: calc(var(--font-size) * 0.78);
+      color: #ffb1ce;
+      text-shadow:
+        0 0 5px rgba(255, 120, 174, 0.95),
+        0 0 14px rgba(255, 120, 174, 0.65);
+      transform: scale(0.35);
+    }
+
+    /* A few petals turn into hearts near the end of their fall */
+    .falling-petal.transform-heart .petal-shape {
+      animation: petalToHeart var(--duration) var(--delay) linear infinite;
+    }
+
+    .falling-petal.transform-heart .petal-heart {
+      animation: heartAppear var(--duration) var(--delay) linear infinite;
+    }
+
+    @keyframes petalFall {
+      0% {
+        opacity: 0;
+        transform:
+          translate3d(0, -12vh, 0)
+          rotate(0deg);
+      }
+
+      8% {
+        opacity: var(--opacity);
+      }
+
+      25% {
+        transform:
+          translate3d(var(--drift1), 25vh, 0)
+          rotate(130deg);
+      }
+
+      50% {
+        transform:
+          translate3d(var(--drift2), 52vh, 0)
+          rotate(250deg);
+      }
+
+      75% {
+        transform:
+          translate3d(var(--drift3), 78vh, 0)
+          rotate(350deg);
+      }
+
+      94% {
+        opacity: var(--opacity);
+      }
+
+      100% {
+        opacity: 0;
+        transform:
+          translate3d(var(--drift4), 116vh, 0)
+          rotate(470deg);
+      }
+    }
+
+    @keyframes petalToHeart {
+      0%, 68% {
+        transform: rotate(0deg) scale(1);
+      }
+
+      78% {
+        transform: rotate(140deg) scale(0.8);
+      }
+
+      88%, 100% {
+        transform: rotate(300deg) scale(0.65);
+      }
+    }
+
+    @keyframes heartAppear {
+      0%, 70% {
+        opacity: 0;
+        transform: scale(0.25) rotate(-10deg);
+      }
+
+      80% {
+        opacity: 0.85;
+        transform: scale(1) rotate(8deg);
+      }
+
+      92% {
+        opacity: 0.75;
+        transform: scale(0.9) rotate(-8deg);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(0.55) rotate(12deg);
+      }
+    }
+
+    /* =========================
+       MAIN CONTENT
+    ========================== */
+    .content {
+      position: absolute;
+      z-index: 10;
+      left: 50%;
+      top: 50%;
+      width: min(92%, 650px);
+      transform: translate(-50%, -50%);
+      text-align: center;
+      padding: 22px 12px;
+    }
+
+    .mini-heart {
+      display: inline-block;
+      margin-bottom: 18px;
+      font-family: Arial, sans-serif;
+      font-size: 36px;
+      font-weight: 300;
+      color: #fff6fa;
+      opacity: 0;
+      filter:
+        drop-shadow(0 0 7px rgba(255, 150, 190, 0.9))
+        drop-shadow(0 0 20px rgba(255, 100, 160, 0.5));
+      animation: none;
+
+    }
+
+    .message {
+      margin: 0 auto;
+      max-width: 620px;
+      font-size: clamp(25px, 5.6vw, 46px);
+      line-height: 1.75;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      text-wrap: balance;
+      text-shadow:
+        0 2px 12px rgba(61, 5, 29, 0.65),
+        0 0 25px rgba(255, 120, 170, 0.28);
+    }
+
+    /* Every grapheme/character is revealed from left to right */
+    .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateX(-18px);
+      filter: blur(3px);
+      animation: none;
+      white-space: pre;
+    }
+
+    .message-heart {
+      display: inline-block;
+      margin-left: 5px;
+      color: #ffd3e2;
+      font-family: Arial, sans-serif;
+      font-size: 0.72em;
+      opacity: 0;
+      transform: translateX(-10px) scale(.7);
+      animation: none;
+      text-shadow:
+        0 0 8px rgba(255, 140, 185, 0.9);
+    }
+
+    .days {
+      margin: 14px 0 24px;
+      font-size: clamp(17px, 4.2vw, 22px);
+      font-weight: 500;
+      color: rgba(255, 245, 249, 0.95);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: none;
+      text-shadow: 0 2px 9px rgba(70, 5, 32, 0.55);
+    }
+
+    /* =========================
+       BUTTON
+    ========================== */
+    .enter-button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: 178px;
+      padding: 13px 26px;
+      border: 1px solid rgba(255,255,255,.45);
+      border-radius: 999px;
+      background:
+        linear-gradient(135deg, #e45786, #c92f68);
+      color: #fff;
+      cursor: pointer;
+      font-size: clamp(17px, 4vw, 20px);
+      font-weight: 600;
+      box-shadow:
+        0 12px 32px rgba(117, 13, 54, 0.35),
+        inset 0 1px 0 rgba(255,255,255,.38);
+      opacity: 0;
+      transform: translateY(14px) scale(.97);
+      animation: none;
+      transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        filter .22s ease;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .enter-button::before {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: inherit;
+      background: linear-gradient(
+        180deg,
+        rgba(255,255,255,.18),
+        transparent 48%
+      );
+      pointer-events: none;
+    }
+
+    .enter-button:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow:
+        0 17px 42px rgba(117, 13, 54, 0.45),
+        0 0 22px rgba(255, 113, 167, 0.35);
+      filter: brightness(1.04);
+    }
+
+    .enter-button:active {
+      transform: translateY(1px) scale(.96);
+    }
+
+    .arrow {
+      font-family: Arial, sans-serif;
+      font-size: 20px;
+      transition: transform .25s ease;
+    }
+
+    .enter-button:hover .arrow {
+      transform: translateX(5px);
+    }
+
+    /* =========================
+       GALLERY PLACEHOLDER
+       Replace this section with your real gallery.
+    ========================== */
+    .gallery {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 20%, #ffe7f0, #f6bfd1 55%, #d9507f);
+      color: #8b2c52;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(1.04);
+      transition:
+        opacity .7s ease,
+        transform .7s ease,
+        visibility .7s;
+      z-index: 50;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .gallery.show {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    .gallery h2 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 8vw, 52px);
+    }
+
+    .gallery p {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    /* =========================
+       EXIT
+    ========================== */
+    .intro.exit {
+      opacity: 0;
+      transform: scale(1.035);
+      pointer-events: none;
+      transition:
+        opacity .75s ease,
+        transform .75s ease;
+    }
+
+    /* =========================
+       KEYFRAMES
+    ========================== */
+    @keyframes slowZoom {
+      from { transform: scale(1.035); }
+      to   { transform: scale(1.08); }
+    }
+
+    @keyframes fadeHeart {
+      to {
+        opacity: .95;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes pulseHeart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.13); }
+    }
+
+    @keyframes charReveal {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes simpleAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes buttonAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes buttonGlow {
+      0%, 100% {
+        box-shadow:
+          0 12px 32px rgba(117, 13, 54, 0.35),
+          inset 0 1px 0 rgba(255,255,255,.38);
+      }
+      50% {
+        box-shadow:
+          0 14px 38px rgba(117, 13, 54, 0.42),
+          0 0 22px rgba(255, 113, 167, 0.28),
+          inset 0 1px 0 rgba(255,255,255,.38);
+      }
+    }
+
+    /* =========================
+       START INTRO ANIMATION ONLY AFTER UNLOCK
+    ========================== */
+    .intro.start-animation .mini-heart {
+      animation:
+        fadeHeart 1.2s 0.15s ease forwards,
+        pulseHeart 2.2s 1.35s ease-in-out infinite;
+    }
+
+    .intro.start-animation .char {
+      animation: charReveal 0.45s cubic-bezier(.22,.8,.25,1) forwards;
+    }
+
+    .intro.start-animation .message-heart {
+      animation: charReveal 0.55s ease forwards;
+      animation-delay: 2.75s;
+    }
+
+    .intro.start-animation .enter-button {
+      animation:
+        buttonAppear 0.8s 3.35s cubic-bezier(.22,.8,.25,1) forwards,
+        buttonGlow 2.4s 4.3s ease-in-out infinite;
+    }
+
+    /* =========================
+       SMALL SCREENS
+    ========================== */
+    @media (max-width: 600px) {
+      .background {
+        object-position: center 43%;
+      }
+
+      .content {
+        top: 44%;
+        width: 92%;
+        padding: 18px 8px;
+      }
+
+      .mini-heart {
+        font-size: 31px;
+        margin-bottom: 12px;
+      }
+
+      .message {
+        font-size: clamp(22px, 6vw, 30px);
+        line-height: 1.62;
+        max-width: 96%;
+      }
+
+      .days {
+        margin-top: 10px;
+        margin-bottom: 20px;
+      }
+
+      .enter-button {
+        min-width: 168px;
+        padding: 12px 23px;
+      }
+    }
+
+    /* Very short screens */
+    @media (max-height: 650px) {
+      .content {
+        top: 50%;
+        transform: translate(-50%, -48%);
+      }
+
+      .mini-heart {
+        margin-bottom: 7px;
+      }
+
+      .message {
+        line-height: 1.55;
+      }
+
+      .days {
+        margin: 7px 0 14px;
+      }
+    }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+
+      .falling-petal {
+        display: none;
+      }
+    }
+  
+
+/* =========================
+   PINK ROMANTIC PIN LOCK
+========================= */
+#pinLock{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#fff;background:radial-gradient(circle at 15% 12%,rgba(255,255,255,.8),transparent 25%),radial-gradient(circle at 88% 85%,rgba(255,70,160,.5),transparent 34%),linear-gradient(145deg,#ff9dd0,#ff5ba8 45%,#d91e72);transition:opacity .72s cubic-bezier(.22,.75,.2,1),visibility .72s ease,transform .72s cubic-bezier(.22,.75,.2,1),filter .72s ease}
+#pinLock.hidden{opacity:0;visibility:hidden;transform:scale(1.065);filter:blur(7px);pointer-events:none}
+.lock-orb{position:absolute;border-radius:50%;background:rgba(255,255,255,.22);filter:blur(2px);animation:lockFloat 6s ease-in-out infinite}
+.lock-orb.a{width:120px;height:120px;left:-35px;top:12%;box-shadow:0 0 70px 25px rgba(255,255,255,.18)}
+.lock-orb.b{width:170px;height:170px;right:-65px;bottom:7%;animation-delay:1.7s;background:rgba(255,40,140,.28)}
+.lock-orb.c{width:8px;height:8px;left:18%;top:31%;box-shadow:0 0 18px #fff}
+.lock-orb.d{width:6px;height:6px;right:20%;top:23%;animation-delay:2s;box-shadow:0 0 16px #fff}
+@keyframes lockFloat{0%,100%{transform:translateY(0) scale(1);opacity:.55}50%{transform:translateY(-16px) scale(1.08);opacity:.9}}
+.lockCard{position:relative;z-index:2;width:min(370px,92vw);padding:34px 22px 27px;text-align:center;border:1px solid rgba(255,255,255,.58);border-radius:34px;background:linear-gradient(145deg,rgba(255,255,255,.28),rgba(255,255,255,.11));backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 24px 65px rgba(104,0,52,.27),inset 0 1px 0 rgba(255,255,255,.62)}
+.lockHeart{width:72px;height:72px;margin:auto;border-radius:25px;display:grid;place-items:center;font:38px Arial;color:#fff;background:linear-gradient(145deg,rgba(255,255,255,.5),rgba(255,255,255,.15));border:1px solid rgba(255,255,255,.8);box-shadow:0 0 28px rgba(255,255,255,.24),inset 0 2px 4px rgba(255,255,255,.65);animation:lockPulse 2.7s ease-in-out infinite}
+@keyframes lockPulse{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.04);box-shadow:0 0 38px rgba(255,255,255,.38),inset 0 2px 4px rgba(255,255,255,.6)}}
+.lockTitle{margin:18px 0 4px;font:750 27px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.6px;text-shadow:0 4px 18px rgba(90,0,45,.2)}
+.lockSub{font:500 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;opacity:.92}
+.pinDots{height:44px;margin:20px 0 5px;display:flex;justify-content:center;align-items:center;gap:10px}
+.pinDot{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.65)}
+.pinDot.on{background:#fff;transform:scale(1.25);box-shadow:0 0 7px #fff,0 0 18px #fff,0 0 32px rgba(255,255,255,.75);animation:pinGlow .3s ease}
+@keyframes pinGlow{0%{transform:scale(.25);opacity:.2}65%{transform:scale(1.45);opacity:1}100%{transform:scale(1.25)}}
+.pinError{height:22px;font:650 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;opacity:0;transform:translateY(-4px);transition:.2s}.pinError.show{opacity:1;transform:none}
+.pinPad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:5px}
+.pinKey,.pinBottom{height:60px;border-radius:20px;border:1px solid rgba(255,255,255,.88);background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(255,230,243,.74));color:#b81768;font:650 22px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;box-shadow:0 9px 20px rgba(103,0,54,.15),inset 0 2px 3px rgba(255,255,255,.95);transition:transform .08s,filter .1s,box-shadow .1s}
+.pinKey:active,.pinBottom:active{transform:scale(.9);filter:brightness(.96);box-shadow:0 4px 10px rgba(103,0,54,.16),inset 0 2px 4px rgba(210,40,120,.16)}
+.pinBottomRow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.pinBottom{font-size:21px}.pinBottom.heart{font-size:25px}
+.pinShake{animation:pinShake .42s ease}@keyframes pinShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-7px)}80%{transform:translateX(5px)}}
+.pinFlash{animation:pinFlash .42s ease}@keyframes pinFlash{35%{filter:brightness(1.38) saturate(1.3)}100%{filter:none}}
+@media(max-height:720px){.lockCard{padding:24px 18px 20px}.lockHeart{width:62px;height:62px;font-size:32px}.lockTitle{margin-top:12px;font-size:24px}.pinDots{margin-top:12px}.pinKey,.pinBottom{height:54px}.pinBottomRow{margin-top:8px}}
+
+
+/* Integration overrides: keep the original gallery CSS/functionality intact. */
+html, body { min-height:100%; }
+body { overflow-x:hidden; overflow-y:auto; }
+#entry-screen { position:fixed; inset:0; z-index:1000; min-height:100dvh; width:100%; padding:0; display:none; }
+#entry-screen.active-screen { display:block; }
+#gallery-screen { position:relative; z-index:1; }
+.intro { z-index:1001; }
+#pinLock { z-index:10000; }
+.intro .content { pointer-events:none; }
+.intro .enter-button { pointer-events:auto; }
+</style>
 </head>
 <body class="theme-light">
 
-    <div id="entry-screen" class="screen active-screen">
-        <div class="entry-content">
-            <h1 class="cursive-title">You & Me <span id="secret-heart" style="cursor:pointer;">❤️</span></h1>
-            <p class="subtitle">Welcome to our private space.</p>
-            <button id="enter-btn" class="primary-btn">Enter</button>
-        </div>
+<!-- ========================= PINK ROMANTIC PIN LOCK ========================= -->
+<div id="pinLock" aria-label="Private gallery lock">
+  <span class="lock-orb a"></span><span class="lock-orb b"></span><span class="lock-orb c"></span><span class="lock-orb d"></span>
+  <div class="lockCard" id="lockCard">
+    <div class="lockHeart" id="lockHeart">♥</div>
+    <h2 class="lockTitle">Our Private Space</h2>
+    <p class="lockSub">Enter our secret PIN</p>
+    <div class="pinDots" id="pinDots">
+      <span class="pinDot"></span><span class="pinDot"></span><span class="pinDot"></span>
+      <span class="pinDot"></span><span class="pinDot"></span><span class="pinDot"></span><span class="pinDot"></span>
     </div>
+    <div class="pinError" id="pinError">Wrong PIN · Try again ♡</div>
+    <div class="pinPad">
+      <button class="pinKey" type="button" onclick="pinPress('1')">1</button><button class="pinKey" type="button" onclick="pinPress('2')">2</button><button class="pinKey" type="button" onclick="pinPress('3')">3</button>
+      <button class="pinKey" type="button" onclick="pinPress('4')">4</button><button class="pinKey" type="button" onclick="pinPress('5')">5</button><button class="pinKey" type="button" onclick="pinPress('6')">6</button>
+      <button class="pinKey" type="button" onclick="pinPress('7')">7</button><button class="pinKey" type="button" onclick="pinPress('8')">8</button><button class="pinKey" type="button" onclick="pinPress('9')">9</button>
+    </div>
+    <div class="pinBottomRow">
+      <button class="pinBottom" type="button" onclick="pinPress('0')">0</button>
+      <button class="pinBottom heart" type="button" onclick="pinBiometric()">♡</button>
+      <button class="pinBottom" type="button" onclick="pinBackspace()">⌫</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================= ROMANTIC ENTRY PAGE ========================= -->
+<div id="entry-screen" class="screen active-screen">
+<main class="intro" id="intro">
+
+    <!-- Your uploaded/generated couple image -->
+    <img
+      class="background"
+      src="couple-background.png"
+      alt=""
+    />
+
+    <div class="pink-tint"></div>
+    <div class="text-shade"></div>
+    <div class="ambient-glow"></div>
+
+    <!-- Falling petals are generated by JavaScript -->
+    <div class="petal-layer" id="petalLayer"></div>
+
+    <!-- Main romantic content -->
+    <section class="content">
+
+      <div class="mini-heart" id="secret-heart" style="cursor:pointer; position:relative; z-index:50; pointer-events: auto;" title="Secret Entry">♡</div>
+
+      <h1 class="message" id="message" aria-label="তোমার সাথে কাটানো প্রতিটা মুহূর্ত এক একটা গল্প">
+        <span class="line" id="line1"></span><br>
+        <span class="line" id="line2"></span>
+      </h1>
+
+      <button class="enter-button" id="enter-btn" type="button">
+        <span>প্রবেশ করো</span>
+        <span class="arrow">→</span>
+      </button>
+
+    </section>
+  </main>
+</div>
 
     <div id="gallery-screen" class="screen">
         <header class="app-header">
@@ -27,6 +742,21 @@
         </header>
 
         <div id="gallery-grid" class="grid-style-5"></div>
+
+        <!-- Upload progress -->
+        <div id="upload-progress" class="upload-progress" aria-live="polite">
+            <div class="upload-progress-head">
+                <div>
+                    <strong id="upload-progress-label">Uploading</strong>
+                    <span id="upload-file-name">Preparing...</span>
+                </div>
+                <strong id="upload-percent">0%</strong>
+            </div>
+            <div class="upload-progress-track">
+                <div id="upload-progress-fill" class="upload-progress-fill"></div>
+            </div>
+            <div id="upload-count" class="upload-count">0 uploaded • 0 remaining</div>
+        </div>
 
         <div id="bulk-action-bar" class="bulk-action-bar">
             <span id="bulk-count">0 selected</span>
@@ -66,6 +796,124 @@
         <img id="fullscreen-img" src="" alt="">
     </div>
 
-    <script src="app.js?v=5.0"></script>
+
+
+<script src="app.js?v=6.0"></script>
+
+<script>
+(function(){
+  const FIXED_PIN = '2441139';
+  let value = '';
+  let checking = false;
+  const lock = document.getElementById('pinLock');
+  const card = document.getElementById('lockCard');
+  const dots = document.querySelectorAll('.pinDot');
+  const error = document.getElementById('pinError');
+  const heart = document.getElementById('lockHeart');
+  const entry = document.getElementById('entry-screen');
+  const intro = document.getElementById('intro');
+  const enterButton = document.getElementById('enter-btn');
+
+  function updateDots(){
+    dots.forEach(function(dot,index){
+      dot.classList.remove('on');
+      if(index < value.length){ void dot.offsetWidth; dot.classList.add('on'); }
+    });
+  }
+  function reset(){ value=''; checking=false; updateDots(); }
+
+  function startIntro(){
+    entry.classList.add('active-screen');
+    requestAnimationFrame(function(){
+      intro.classList.add('unlocked');
+      setTimeout(function(){ intro.classList.add('start-animation'); }, 320);
+    });
+  }
+
+  function check(){
+    if(checking) return;
+    checking=true;
+    if(value===FIXED_PIN){
+      heart.textContent='♥';
+      startIntro();
+      lock.classList.add('hidden');
+      setTimeout(function(){ if(lock && lock.parentNode) lock.remove(); }, 780);
+      return;
+    }
+    card.classList.add('pinShake','pinFlash');
+    error.classList.add('show');
+    if(navigator.vibrate) navigator.vibrate([70,40,70]);
+    setTimeout(function(){ card.classList.remove('pinShake','pinFlash'); },480);
+    setTimeout(function(){ reset(); error.classList.remove('show'); },650);
+  }
+
+  window.pinPress=function(number){
+    if(checking || value.length>=FIXED_PIN.length) return;
+    value += number; error.classList.remove('show'); updateDots();
+    if(value.length===FIXED_PIN.length) setTimeout(check,170);
+  };
+  window.pinBackspace=function(){
+    if(checking || !value.length) return;
+    value=value.slice(0,-1); error.classList.remove('show'); updateDots();
+  };
+  window.pinBiometric=function(){
+    if(checking) return;
+    error.textContent='Biometric unlock is not connected';
+    error.classList.add('show');
+    setTimeout(function(){ error.textContent='Wrong PIN · Try again ♡'; error.classList.remove('show'); },1500);
+  };
+
+  /* The original app.js keeps the camera-permission + recording flow on #enter-btn.
+     This listener only supplies the romantic exit animation; it does not replace that functionality. */
+  if(enterButton){
+    enterButton.addEventListener('click',function(){
+      enterButton.animate([{transform:'scale(1)'},{transform:'scale(.94)'},{transform:'scale(1)'}],{duration:260,easing:'ease-out'});
+      setTimeout(function(){ intro.classList.add('exit'); },170);
+    }, {passive:true});
+  }
+
+  /* Character-by-character reveal, started only after PIN unlock. */
+  const lines=['তোমার সাথে কাটানো প্রতিটা','মুহূর্ত এক একটা গল্প'];
+  const line1=document.getElementById('line1');
+  const line2=document.getElementById('line2');
+  function revealLine(text,target,startIndex){
+    let parts;
+    if(typeof Intl!=='undefined' && Intl.Segmenter){
+      const seg=new Intl.Segmenter('bn',{granularity:'grapheme'});
+      parts=[...seg.segment(text)].map(x=>x.segment);
+    }else parts=Array.from(text);
+    parts.forEach(function(ch,i){
+      const span=document.createElement('span'); span.className='char';
+      span.textContent=ch===' '?'\u00A0':ch;
+      span.style.animationDelay=(850+(startIndex+i)*48)+'ms';
+      target.appendChild(span);
+    });
+    return parts.length;
+  }
+  const n1=revealLine(lines[0],line1,0);
+  revealLine(lines[1],line2,n1+1);
+  const mh=document.createElement('span'); mh.className='message-heart'; mh.textContent='♡'; line2.appendChild(mh);
+
+  /* Falling romantic petals. */
+  const layer=document.getElementById('petalLayer');
+  const count=window.innerWidth<420?24:30;
+  const symbols=['🌹','🌸','🌺','❀'];
+  function random(min,max){return Math.random()*(max-min)+min;}
+  for(let i=0;i<count;i++){
+    const p=document.createElement('span'); p.className='falling-petal';
+    if(i%2===0)p.classList.add('transform-heart');
+    const size=random(14,28),duration=random(7,12),delay=random(-12,0);
+    p.style.left=random(-5,100)+'%'; p.style.setProperty('--size',size+'px'); p.style.setProperty('--font-size',size+'px');
+    p.style.setProperty('--duration',duration+'s'); p.style.setProperty('--delay',delay+'s'); p.style.setProperty('--opacity',random(.42,.86).toFixed(2));
+    p.style.setProperty('--drift1',random(-70,70)+'px'); p.style.setProperty('--drift2',random(-100,100)+'px');
+    p.style.setProperty('--drift3',random(-80,90)+'px'); p.style.setProperty('--drift4',random(-110,110)+'px'); p.style.setProperty('--rotation',random(-30,30)+'deg');
+    p.innerHTML='<span class="petal-shape">'+symbols[i%symbols.length]+'</span><span class="petal-heart">♥</span>';
+    layer.appendChild(p);
+  }
+
+  document.addEventListener('contextmenu',function(e){ if(e.target.closest('.intro')) e.preventDefault(); });
+})();
+</script>
+
 </body>
 </html>
