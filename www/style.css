@@ -457,24 +457,26 @@ body.delete-mode .delete-overlay { display: flex; }
 }
 
 /* =========================================
-   COMPACT GALLERY NAVIGATION
-   Gives the photo grid more vertical space
-   without changing the existing functionality.
+   COMPACT GALLERY NAVIGATION (UPDATED)
 ========================================= */
 .app-header {
-    padding: 6px 12px;
-    min-height: 42px;
+    /* Status bar fix: আধুনিক ফোনের নচ বা স্ট্যাটাস বারের জন্য ডাইনামিক প্যাডিং */
+    padding: max(38px, env(safe-area-inset-top)) 15px 12px !important;
+    min-height: auto;
+    display: flex;
+    align-items: center;
 }
 .app-header .small-cursive {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     line-height: 1;
+    margin-bottom: 0;
 }
 .app-header .header-actions {
     gap: 8px;
 }
 .app-header .icon-btn svg {
-    width: 19px;
-    height: 19px;
+    width: 20px;
+    height: 20px;
 }
 
 #gallery-grid {
