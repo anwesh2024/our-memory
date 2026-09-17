@@ -35,18 +35,21 @@ function toggleFavorite(key, element) {
         if (favorites.includes(key)) {
             favorites = favorites.filter(k => k !== key);
         } else {
-            favorites.push(key);
+            // push() এর বদলে unshift() ব্যবহার করা হয়েছে, যাতে নতুন ফেভারিট একদম শুরুতে (top) যায়
+            favorites.unshift(key); 
             isFav = true;
         }
         saveFavorites();
         
-        const badge = element.querySelector('.fav-badge');
-        if (isFav && !badge) {
-            element.insertAdjacentHTML('beforeend', '<div class="fav-badge">❤️</div>');
-        } else if (!isFav && badge) {
-            badge.remove();
-            if(showFavsOnly) element.style.display = 'none'; 
-        }
+        // স্ক্রল পজিশন সেভ করে রাখা হচ্ছে যাতে স্ক্রিন লাফ না দেয়
+        const scrollPos = window.scrollY;
+
+        // কোনো নেটওয়ার্ক রিলোড ছাড়াই লোকালি গ্যালারি ইনস্ট্যান্ট আপডেট করা
+        renderGallery(false);
+
+        // স্ক্রল পজিশন আগের জায়গায় ফিরিয়ে আনা
+        window.scrollTo(0, scrollPos);
+
         try { if (navigator.vibrate) navigator.vibrate(45); } catch(e) {}
     } catch(e) {}
 }
