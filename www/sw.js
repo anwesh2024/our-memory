@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gallery-permanent-cache-v1';
+const CACHE_NAME = 'gallery-permanent-cache-v2';
 
 self.addEventListener('fetch', event => {
     // শুধুমাত্র ক্লাউডফ্লেয়ারের ছবিগুলো ক্যাশ করবে
