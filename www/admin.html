@@ -79,7 +79,7 @@
                     <span id="storage-count">0 videos</span>
                 </div>
                 <div class="progress-track" style="margin-bottom: 18px;"><div class="progress-fill" id="storage-bar"></div></div>
-                <button onclick="window.location.replace('index.html')" class="btn" style="background: #2c2c2e; color: #f2f2f7; width: 100%;">← Back to Gallery</button>
+                <button onclick="sessionStorage.setItem('skipLock', 'true'); window.location.replace('index.html')" class="btn" style="background: #2c2c2e; color: #f2f2f7; width: 100%;">← Back to Gallery</button>
             </div>
             
             <!-- NEW: Remote Control Toggle -->
