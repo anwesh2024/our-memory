@@ -117,12 +117,12 @@
             <video id="main-player" controls playsinline></video>
         </div>
     </div>
-
-    <script>
-        window.onload = function() {
+<script>
+    window.onload = function() {
             window.location.hash = "panel"; 
             window.onhashchange = function() {
                 if (!window.location.hash) {
+                    sessionStorage.setItem('skipLock', 'true'); // স্কিপ করার সিগন্যাল
                     window.location.replace("index.html"); 
                 }
             };
