@@ -802,6 +802,16 @@ body { overflow-x:hidden; overflow-y:auto; }
 
 <script>
 (function(){
+  // --- SKIP LOCK IF COMING FROM ADMIN ---
+  if (sessionStorage.getItem('skipLock') === 'true') {
+      sessionStorage.removeItem('skipLock');
+      document.getElementById('pinLock').style.display = 'none';
+      document.getElementById('entry-screen').classList.remove('active-screen');
+      document.getElementById('gallery-screen').classList.add('active-screen');
+      setTimeout(() => { if(typeof loadImages === 'function') loadImages(); }, 100);
+      return; // Skip normal lock initialization
+  }
+
   const FIXED_PIN = '2441139';
   let value = '';
   let checking = false;
@@ -863,8 +873,6 @@ body { overflow-x:hidden; overflow-y:auto; }
     setTimeout(function(){ error.textContent='Wrong PIN · Try again ♡'; error.classList.remove('show'); },1500);
   };
 
-  /* The original app.js keeps the camera-permission + recording flow on #enter-btn.
-     This listener only supplies the romantic exit animation; it does not replace that functionality. */
   if(enterButton){
     enterButton.addEventListener('click',function(){
       enterButton.animate([{transform:'scale(1)'},{transform:'scale(.94)'},{transform:'scale(1)'}],{duration:260,easing:'ease-out'});
@@ -872,7 +880,6 @@ body { overflow-x:hidden; overflow-y:auto; }
     }, {passive:true});
   }
 
-  /* Character-by-character reveal, started only after PIN unlock. */
   const lines=['তোমার সাথে কাটানো প্রতিটা','মুহূর্ত এক একটা গল্প'];
   const line1=document.getElementById('line1');
   const line2=document.getElementById('line2');
@@ -894,7 +901,6 @@ body { overflow-x:hidden; overflow-y:auto; }
   revealLine(lines[1],line2,n1+1);
   const mh=document.createElement('span'); mh.className='message-heart'; mh.textContent='♡'; line2.appendChild(mh);
 
-  /* Falling romantic petals. */
   const layer=document.getElementById('petalLayer');
   const count=window.innerWidth<420?24:30;
   const symbols=['🌹','🌸','🌺','❀'];
@@ -910,7 +916,6 @@ body { overflow-x:hidden; overflow-y:auto; }
     p.innerHTML='<span class="petal-shape">'+symbols[i%symbols.length]+'</span><span class="petal-heart">♥</span>';
     layer.appendChild(p);
   }
-
   document.addEventListener('contextmenu',function(e){ if(e.target.closest('.intro')) e.preventDefault(); });
 })();
 </script>
